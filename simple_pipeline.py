@@ -1,6 +1,7 @@
 import stanza
 
-ENTITY_TYPES = ['PERSON']
+ENTITY_TYPES = ['PERSON', 'ORGANIZATION', 'LOCATION', 'PER', 'ORG', 'LOC', 'FAC', 'GPE', 'PRODUCT',
+                'EVENT', 'WORK_OF_ART', 'LAW', 'LANGUAGE']
 
 
 def simple_pipeline(docs, terms):
@@ -24,7 +25,8 @@ def simple_pipeline(docs, terms):
 
 
 if __name__ == '__main__':
-    docs = ['This is a sentence about Winston Churchill.', 'A second sentence is here.', 'Three sentences!']
+    docs = ['This is a sentence about Winston Churchill.', 'A second sentence is here.',
+            'Three sentences!']
     terms = ['be', 'bee', 'sentence', 'Churchill']
     terms = dict.fromkeys(terms)
     simple_pipeline(docs, terms)
