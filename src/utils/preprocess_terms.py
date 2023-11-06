@@ -12,7 +12,7 @@ def preprocess_terms(terms_filepath: str, savepath: str, language: str = 'en', r
     in_terms = [stanza.Document([], text=t.strip()) for t in term_lines]
     nlp = stanza.Pipeline(language, processors='tokenize, lemma')
     out_terms = nlp(in_terms)
-    lemmatized_terms = ([word.lemma
+    lemmatized_terms = ([word.lemma.lower()
                          for sent in doc.sentences for word in sent.words]
                         for doc in out_terms)
     sorted_terms = sorted(lemmatized_terms, key=lambda x: x[0])
