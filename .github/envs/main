@@ -1,0 +1,1 @@
+echo DEPLOY_URL=http://brutus.image.ece.ntua.gr:9999 >> $GITHUB_ENV
