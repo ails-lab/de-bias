@@ -15,8 +15,8 @@ processed_terms_filepaths = {
 }
 
 in_memory_models = OrderedDict({
-    lang: stanza.Pipeline(lang, processors='tokenize, lemma, ner',
-                          package={'lemma': 'combined_charlm'})
+    lang: stanza.Pipeline(lang, processors='tokenize, mwt, pos, lemma, ner',
+                          package={'pos': 'combined_charlm', 'lemma': 'combined_charlm'})
     for lang in startup_languages
 })
 
