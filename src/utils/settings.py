@@ -11,7 +11,7 @@ startup_languages = [
 ]
 
 processed_terms_filepaths = {
-    'en': './samples/processed_vocab.pickle'
+    'en': './samples/english_vocab_v1_processed.pickle'
 }
 
 in_memory_models = OrderedDict({
