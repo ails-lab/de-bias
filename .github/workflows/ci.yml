@@ -1,0 +1,89 @@
+name: ci
+
+on:
+  push:
+    branches:
+      - devops/citest
+      - main
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  ci:
+    runs-on: [self-hosted]
+
+    env:
+      PROJECT: ai4culture
+      APP: debias
+
+    steps:
+      - name: Checkout 🛎
+        uses: actions/checkout@master
+
+      - name: Set env for branch
+        run: |
+          ([ -f "${{ github.workspace }}/.github/envs/${{ github.ref_name }}" ] && . "${{ github.workspace }}/.github/envs/${{ github.ref_name }}" )|| echo "no env file for ${{ github.ref_name }}"
+
+      - name: docker prepare
+        uses: bitbool-actions/docker-prepare@main
+        id: docker_prepare_base
+        with:
+          DOCKER_REGISTRY: "${{ env.PROJECT }}.docker.ails.ece.ntua.gr"
+          DOCKER_REPO: "${{ env.APP }}-base"
+          DOCKER_USER: "builder"
+          DOCKER_PASSWORD: "${{ secrets.WITH_DOCKER_KEY }}"
+
+      - name: build base
+        run: |
+          docker build -t ${{ env.PROJECT }}.docker.ails.ece.ntua.gr/${{ env.APP }}-base:${{ github.ref_name }} -f Dockerfile.base .
+          docker build -t ${{ env.PROJECT }}.docker.ails.ece.ntua.gr/${{ env.APP }}-base:${{ github.sha }} -f Dockerfile.base .
+          docker build -t ${{ env.PROJECT }}.docker.ails.ece.ntua.gr/${{ env.APP }}-base:latest -f Dockerfile.base .
+          docker push ${{ env.PROJECT }}.docker.ails.ece.ntua.gr/${{ env.APP }}-base:${{ github.ref_name }} 
+          docker push ${{ env.PROJECT }}.docker.ails.ece.ntua.gr/${{ env.APP }}-base:${{ github.sha }}
+          docker push ${{ env.PROJECT }}.docker.ails.ece.ntua.gr/${{ env.APP }}-base:latest
+
+      - name: build app
+        run: |
+          docker build -t ${{ env.PROJECT }}.docker.ails.ece.ntua.gr/${{ env.APP }}:${{ github.ref_name }} .
+          docker build -t ${{ env.PROJECT }}.docker.ails.ece.ntua.gr/${{ env.APP }}:${{ github.sha }} .
+          docker push ${{ env.PROJECT }}.docker.ails.ece.ntua.gr/${{ env.APP }}:${{ github.ref_name }} 
+          docker push ${{ env.PROJECT }}.docker.ails.ece.ntua.gr/${{ env.APP }}:${{ github.sha }}
+
+      # - name: Build and push base
+      #   id: docker_build_base
+      #   uses: docker/build-push-action@v5
+      #   with:
+      #     context: .
+      #     tags: ${{ steps.docker_prepare_base.outputs.tags }}
+      #     push: true
+      #     file: Dockerfile.base
+      #     # cache-from: type=registry,ref=${{ env.PROJECT }}.docker.ails.ece.ntua.gr/${{ env.APP }}:buildcache
+      #     # cache-to: type=registry,${{ env.PROJECT }}.docker.ails.ece.ntua.gr/${{ env.APP }}:buildcache,mode=max
+      #     #cache-from: type=local,src=/data/buildx-cache
+      #     cache-to: type=local,dest=/data/buildx-cache,mode=max,compression-level=0,compression=zstd
+
+      # - name: docker prepare
+      #   uses: bitbool-actions/docker-prepare@main
+      #   id: docker_prepare
+      #   with:
+      #     DOCKER_REGISTRY: "${{ env.PROJECT }}.docker.ails.ece.ntua.gr"
+      #     DOCKER_REPO: "${{ env.APP }}"
+      #     DOCKER_USER: "builder"
+      #     DOCKER_PASSWORD: "${{ secrets.WITH_DOCKER_KEY }}"
+
+      # - name: Build and push app
+      #   id: docker_build
+      #   uses: docker/build-push-action@v5
+      #   with:
+      #     context: .
+      #     tags: ${{ steps.docker_prepare.outputs.tags }}
+      #     push: true
+      #     file: Dockerfile
+
+      - uses: bitbool-actions/docker-compose-deploy@master
+        id: docker_deploy
+        with:
+          AUTH_TOKEN: "${{ secrets.GPU_DOCKER_COMPOSE_DEPLOY_SECRET }}"
+          DEPLOY_URL: "${{ env.DEPLOY_URL }}/docker-compose-deploy/deploy"
+          IMAGES: "${{ env.PROJECT }}.docker.ails.ece.ntua.gr/${{ env.APP }}:${{ github.ref_name }}"
