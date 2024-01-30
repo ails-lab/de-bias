@@ -1,10 +1,23 @@
 import pickle
+from collections import OrderedDict
 
 import stanza
 
 from src.api_modules.filtering_module import filter_matches
 from src.api_modules.matching_module import find_matches
-from src.utils.settings import in_memory_models, in_memory_terms, processed_terms_filepaths
+from src.utils.settings import stanza_models_kwargs, startup_languages, processed_terms_filepaths
+
+
+in_memory_models = OrderedDict({
+    lang: stanza.Pipeline(lang, **stanza_models_kwargs[lang])
+    for lang in startup_languages
+})
+
+in_memory_terms = OrderedDict()
+
+for lang in startup_languages:
+    with open(processed_terms_filepaths[lang], 'rb') as fp:
+        in_memory_terms[lang] = pickle.load(fp)
 
 
 def find_terms(docs: list[str], language: str = 'en') -> list:
