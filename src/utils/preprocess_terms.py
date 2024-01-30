@@ -8,11 +8,10 @@ import pandas as pd
 
 def preprocess_terms(terms_filepath: str, savepath: str, language: str = 'en', ret: bool = False)\
         -> Optional[dict]:
-    df = pd.read_csv(terms_filepath, dtype={'Contentious labels': str})
-    terms = df['Contentious labels']
-    terms = terms.dropna()
+    terms = pd.read_csv(terms_filepath, header=None)
+    terms = terms.dropna()[0]
     in_terms = [stanza.Document([], text=t.strip()) for t in terms]
-    nlp = stanza.Pipeline(language, processors='tokenize, lemma')
+    nlp = stanza.Pipeline(language, processors='tokenize, mwt, lemma')
     out_terms = nlp(in_terms)
     lemmatized_terms = ([word.lemma.lower()
                          for sent in doc.sentences for word in sent.words]
