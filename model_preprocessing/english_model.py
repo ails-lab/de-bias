@@ -1,7 +1,10 @@
 import torch
+import os
 
 
-model = torch.load('~/stanza_resources/en/lemma/combined_charlm.pt', map_location='cpu')
+STANZA_PATH = os.getenv('STANZA_PATH')
+
+model = torch.load(os.path.join(STANZA_PATH, 'en/lemma/combined_charlm.pt'), map_location='cpu')
 word_dict, composite_dict = model['dicts']
 
 word_dict['woman'] = word_dict['women'] = 'man'
@@ -38,4 +41,4 @@ composite_dict[('bent', 'NOUN')] = composite_dict[('bent', 'ADJ')] = 'bent'
 composite_dict[('colored', 'NOUN')] = composite_dict[('colored', 'ADJ')] = 'colored'
 composite_dict[('coloured', 'NOUN')] = composite_dict[('coloured', 'ADJ')] = 'coloured'
 
-torch.save(model, '~/stanza_resources/en/lemma/combined_charlm_customized.pt')
+torch.save(model, os.path.join(STANZA_PATH, 'en/lemma/combined_charlm_customized.pt'))
