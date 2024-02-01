@@ -10,7 +10,7 @@ ENTITY_TYPES = ['PERSON', 'ORGANIZATION', 'LOCATION', 'PER', 'ORG', 'LOC', 'FAC'
 stanza_models_kwargs = {
     'en': {
         'processors': 'tokenize, mwt, pos, lemma, ner',
-        'package': {'pos': 'combined_charlm', 'lemma': 'combined_charlm'},
+        'package': 'default_accurate',
         'lemma_model_path': os.path.join(STANZA_RESOURCES_DIR,
                                          'en/lemma/combined_charlm_customized.pt')
     }
