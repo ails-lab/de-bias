@@ -13,6 +13,10 @@ stanza_models_kwargs = {
         'package': 'default_accurate',
         'lemma_model_path': os.path.join(STANZA_RESOURCES_DIR,
                                          'en/lemma/combined_charlm_customized.pt')
+    },
+    'fr': {
+        'processors': 'tokenize, mwt, pos, lemma, ner',
+        'package': 'default_accurate',
     }
 }
 
