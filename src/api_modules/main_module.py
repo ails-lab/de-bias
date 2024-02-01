@@ -9,7 +9,7 @@ from src.utils.settings import stanza_models_kwargs, startup_languages, processe
 
 
 in_memory_models = OrderedDict({
-    lang: stanza.Pipeline(lang, **stanza_models_kwargs[lang])
+    lang: stanza.Pipeline(lang, download_method=None, **stanza_models_kwargs[lang])
     for lang in startup_languages
 })
 
@@ -25,7 +25,7 @@ def find_terms(docs: list[str], language: str = 'en') -> list:
         nlp = in_memory_models[language]
         in_memory_models.move_to_end(language)
     else:
-        nlp = stanza.Pipeline(language, processors='tokenize, lemma, ner')
+        nlp = stanza.Pipeline(language, download_method=None, **stanza_models_kwargs[language])
         in_memory_models.popitem(last=False)
         in_memory_models[language] = nlp
 

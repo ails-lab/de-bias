@@ -1,7 +1,10 @@
 import pandas as pd
+import os
 
 
-df = pd.read_csv('../vocabularies/DE-BIAS Vocabulary v1 for review - English.csv',
+VOCABULARIES_PATH = os.getenv('VOCABULARIES_PATH')
+
+df = pd.read_csv(os.path.join(VOCABULARIES_PATH, 'DE-BIAS Vocabulary v1 for review - English.csv'),
                  dtype={'Contentious labels': str})
 terms = df['Contentious labels']
 terms = terms.dropna()
@@ -16,5 +19,6 @@ terms = terms.replace(to_replace='kuli/s', value='kuli')
 terms = terms.replace(to_replace='skin colour/s', value='skin colour')
 terms = pd.concat([terms, pd.Series(['skin color'])], ignore_index=True)
 terms = pd.concat([terms, pd.Series(['coloured'])], ignore_index=True)
-terms.to_csv('../vocabularies/DE-BIAS Vocabulary v1 for review - English_clean.csv',
+terms.to_csv(os.path.join(VOCABULARIES_PATH,
+                          'DE-BIAS Vocabulary v1 for review - English_clean.csv'),
              index=False, header=False, quoting=1)
