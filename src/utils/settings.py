@@ -1,26 +1,29 @@
-from collections import OrderedDict
-import pickle
+import os
 
-import stanza
+
+STANZA_RESOURCES_DIR = os.getenv('STANZA_RESOURCES_DIR')
+VOCABULARIES_PATH = os.getenv('VOCABULARIES_PATH')
 
 ENTITY_TYPES = ['PERSON', 'ORGANIZATION', 'LOCATION', 'PER', 'ORG', 'LOC', 'FAC', 'GPE', 'PRODUCT',
                 'EVENT', 'WORK_OF_ART', 'LAW', 'LANGUAGE']
+
+stanza_models_kwargs = {
+    'en': {
+        'processors': 'tokenize, mwt, pos, lemma, ner',
+        'package': 'default_accurate',
+        'lemma_model_path': os.path.join(STANZA_RESOURCES_DIR,
+                                         'en/lemma/combined_charlm_customized.pt')
+    },
+    'fr': {
+        'processors': 'tokenize, mwt, pos, lemma, ner',
+        'package': 'default_accurate',
+    }
+}
 
 startup_languages = [
     'en',
 ]
 
 processed_terms_filepaths = {
-    'en': './samples/english_vocab_v1_processed.pickle'
+    'en': os.path.join(VOCABULARIES_PATH, 'english_vocab_v1_processed.pickle')
 }
-
-in_memory_models = OrderedDict({
-    lang: stanza.Pipeline(lang, processors='tokenize, lemma, ner')
-    for lang in startup_languages
-})
-
-in_memory_terms = OrderedDict()
-
-for lang in startup_languages:
-    with open(processed_terms_filepaths[lang], 'rb') as fp:
-        in_memory_terms[lang] = pickle.load(fp)
