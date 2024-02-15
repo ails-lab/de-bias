@@ -37,10 +37,12 @@ word_dict['paraphilias'] = 'paraphilia'
 
 composite_dict[('woman', 'NOUN')] = composite_dict[('women', 'NOUN')] = 'man'
 composite_dict[('roots', 'NOUN')] = 'roots'
-composite_dict[('mixed', 'NOUN')] = composite_dict[('mixed', 'ADJ')] = 'mixed'
-composite_dict[('features', 'NOUN')] = 'features'
+composite_dict[('mixed', 'NOUN')] = composite_dict[('mixed', 'ADJ')] \
+    = composite_dict[('mixed', 'VERB')] = 'mixed'
+composite_dict[('features', 'NOUN')] = composite_dict[('features', 'VERB')] = 'features'
 composite_dict[('bent', 'NOUN')] = composite_dict[('bent', 'ADJ')] = 'bent'
-composite_dict[('colored', 'NOUN')] = composite_dict[('colored', 'ADJ')] = 'colored'
+composite_dict[('colored', 'NOUN')] = composite_dict[('colored', 'ADJ')]\
+    = composite_dict[('colored', 'VERB')] = 'colored'
 composite_dict[('coloured', 'NOUN')] = composite_dict[('coloured', 'ADJ')] = 'coloured'
 
 torch.save(model, os.path.join(STANZA_RESOURCES_DIR, 'en/lemma/combined_charlm_customized.pt'))

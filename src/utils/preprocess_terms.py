@@ -12,7 +12,7 @@ def preprocess_terms(terms_filepath: str, savepath: str, language: str = 'en', r
         -> Optional[dict]:
     terms = pd.read_csv(terms_filepath, header=None)
     terms = terms.dropna()[0]
-    in_terms = [stanza.Document([], text=t.strip()) for t in terms]
+    in_terms = [stanza.Document([], text=t.strip().lower()) for t in terms]
     nlp = stanza.Pipeline(language, download_method=None, **stanza_models_kwargs[language])
     out_terms = nlp(in_terms)
     lemmatized_terms = ([word.lemma.lower()

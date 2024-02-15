@@ -22,8 +22,10 @@ stanza_models_kwargs = {
 
 startup_languages = [
     'en',
+    'fr'
 ]
 
 processed_terms_filepaths = {
-    'en': os.path.join(VOCABULARIES_PATH, 'english_vocab_v1_processed.pickle')
+    'en': os.path.join(VOCABULARIES_PATH, 'english_vocab_v1_processed.pickle'),
+    'fr': os.path.join(VOCABULARIES_PATH, 'french_vocab_v1_processed.pickle')
 }
