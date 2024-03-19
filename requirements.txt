@@ -28,6 +28,7 @@ nvidia-nccl-cu12==2.18.1
 nvidia-nvjitlink-cu12==12.3.101
 nvidia-nvtx-cu12==12.1.105
 protobuf==4.25.2
+pyahocorasick==2.0.0
 pydantic==2.5.3
 pydantic_core==2.14.6
 requests==2.31.0

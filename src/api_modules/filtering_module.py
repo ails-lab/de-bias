@@ -11,7 +11,7 @@ def filter_matches(sentence: stanza.models.common.doc.Sentence,
     entities = [(ent.text, ent.start_char, ent.end_char, ent.type)
                 for ent in sentence.ents if ent.type in ENTITY_TYPES]
 
-    print(entities)
+    print('entities', entities)
 
     for match in matches:
         lemmatized_term, term_start_char, term_end_char = match
@@ -20,5 +20,5 @@ def filter_matches(sentence: stanza.models.common.doc.Sentence,
                 print('Term {} is part of entity {}'.format(lemmatized_term, ent_text))
         else:
             filtered_matches.append(match)
-    print(filtered_matches)
+    print('filtered matches', filtered_matches)
     return filtered_matches

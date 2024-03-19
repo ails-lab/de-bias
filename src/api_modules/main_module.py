@@ -6,7 +6,9 @@ import stanza
 from src.api_modules.filtering_module import filter_matches
 from src.api_modules.matching_module import find_matches
 from src.utils.settings import stanza_models_kwargs, startup_languages, processed_terms_filepaths
-
+# need to import in order to log these as stanza processors
+# ORDER MATTERS for some godforsaken reason
+from src.custom_processors import standardize, delayed_lemmatizer, german_compound_noun_splitter
 
 in_memory_models = OrderedDict({
     lang: stanza.Pipeline(lang, download_method=None, **stanza_models_kwargs[lang])
