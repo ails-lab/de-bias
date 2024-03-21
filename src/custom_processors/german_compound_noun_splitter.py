@@ -1,10 +1,13 @@
 import itertools
+import os
 
 import stanza
 from stanza.pipeline.processor import register_processor, Processor
 from stanza.models.common.doc import Word
 
 from src.utils import comp_split
+
+VOCABULARIES_PATH = os.getenv('VOCABULARIES_PATH')
 
 
 @register_processor('german_compound_noun_splitter')
@@ -13,7 +16,7 @@ class GermanCompNounSplitterProcessor(Processor):
     _provides = {'splitter'}
 
     def __init__(self, device, config, pipeline):
-        model_path = './german/german_utf8_linux.dic'
+        model_path = os.path.join(VOCABULARIES_PATH, './german_utf8_linux.dic')
         self._set_up_model({'model_path': model_path}, pipeline, 'cpu')
 
     def _set_up_model(self, config, pipeline, device):
@@ -43,7 +46,7 @@ class GermanCompNounSplitterProcessor(Processor):
                                 new_word_dict = {
                                     'id': word_id,
                                     'text': part,
-                                    'lemma': part,
+                                    'lemma': part.lower(),
                                     'upos': upos,
                                     'xpos': xpos,
                                     'feats': feats
@@ -62,5 +65,6 @@ class GermanCompNounSplitterProcessor(Processor):
                 token.words = new_word_list
                 token.id = tuple(word.id for word in new_word_list)
             sent.words = list(itertools.chain.from_iterable(token.words for token in sent.tokens))
+        doc._count_words()
         return doc
 

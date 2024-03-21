@@ -1,3 +1,4 @@
+import argparse
 import pickle
 from itertools import groupby
 from typing import Optional
@@ -13,10 +14,13 @@ def preprocess_terms(terms_filepath: str, savepath: str, language: str = 'en', r
         -> Optional[dict]:
     terms = pd.read_csv(terms_filepath, header=None)
     terms = terms.dropna()[0]
-    in_terms = [stanza.Document([], text=t.strip().lower()) for t in terms]
+    in_terms = [stanza.Document([], text=t.strip()) for t in terms]
     nlp = stanza.Pipeline(language, download_method=None, **stanza_models_kwargs[language])
     out_terms = nlp(in_terms)
-    lemmatized_terms = ([word.lemma.lower()
+    # print([[(word.text, word.lemma)
+    #         for sent in doc.sentences for word in sent.words]
+    #        for doc in out_terms])
+    lemmatized_terms = ([word.lemma
                          for sent in doc.sentences for word in sent.words]
                         for doc in out_terms)
     sorted_terms = sorted(lemmatized_terms, key=lambda x: x[0])
@@ -26,3 +30,28 @@ def preprocess_terms(terms_filepath: str, savepath: str, language: str = 'en', r
         pickle.dump(prefixed_terms, fp)
     if ret:
         return prefixed_terms
+
+
+def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument(
+        '--terms-filepath',
+        type=str
+    )
+    parser.add_argument(
+        '--savepath',
+        type=str
+    )
+    parser.add_argument(
+        '--language',
+        type=str,
+        choices=['en', 'de', 'fr', 'it', 'nl']
+    )
+    args = parser.parse_args()
+
+    terms = preprocess_terms(args.terms_filepath, args.savepath, language=args.language, ret=True)
+    print(terms)
+
+
+if __name__ == '__main__':
+    main()
