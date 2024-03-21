@@ -61,7 +61,11 @@ stanza_models_kwargs = {
 }
 
 startup_languages = [
+    'en',
+    'it',
     'de',
+    'fr',
+    'nl'
 ]
 
 processed_terms_filepaths = {
