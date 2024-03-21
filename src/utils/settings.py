@@ -69,9 +69,9 @@ startup_languages = [
 ]
 
 processed_terms_filepaths = {
-    'en': os.path.join(VOCABULARIES_PATH, 'english_vocab_v1_processed.pickle'),
-    'fr': os.path.join(VOCABULARIES_PATH, 'french_vocab_v1_processed.pickle'),
-    'nl': os.path.join(VOCABULARIES_PATH, 'dutch_vocab_v1_processed.pickle'),
-    'de': os.path.join(VOCABULARIES_PATH, 'german_vocab_v1_processed.pickle'),
-    'it': os.path.join(VOCABULARIES_PATH, 'italian_vocab_v1_processed.pickle')
+    'en': os.path.join(VOCABULARIES_PATH, 'english_vocab_v2_processed.pickle'),
+    'fr': os.path.join(VOCABULARIES_PATH, 'french_vocab_v2_processed.pickle'),
+    'nl': os.path.join(VOCABULARIES_PATH, 'dutch_vocab_v2_processed.pickle'),
+    'de': os.path.join(VOCABULARIES_PATH, 'german_vocab_v2_processed.pickle'),
+    'it': os.path.join(VOCABULARIES_PATH, 'italian_vocab_v2_processed.pickle')
 }
