@@ -22,7 +22,9 @@ for lang in startup_languages:
         in_memory_terms[lang] = pickle.load(fp)
 
 
-def find_terms(docs: list[str], language: str = 'en') -> list:
+def find_terms(doc_details, language: str = 'en') -> list:
+    
+    # Load model in memory
     if language in in_memory_models:
         nlp = in_memory_models[language]
         in_memory_models.move_to_end(language)
@@ -39,17 +41,20 @@ def find_terms(docs: list[str], language: str = 'en') -> list:
             terms = pickle.load(fp)
         in_memory_terms.popitem(last=False)
         in_memory_terms[language] = terms
-
-    in_docs = [stanza.Document([], text=d) for d in docs]
+    # To get the set of values, we get the keys
+    in_docs = [stanza.Document([], text=d) for d in doc_details.keys()]
     out_docs = nlp(in_docs)
     filtered_matches = []
 
+    # TODO: need to keep reference of original value somehow
     for doc in out_docs:
         for sentence in doc.sentences:
             matches = find_matches(sentence, terms)
             filtered_matches.extend(filter_matches(sentence, matches))
 
     return [{
+        'type': 'Annotation',
+        'motivation': 'highlighting',
         'body': match[0],
         'target': {
             'language': language,
