@@ -1,6 +1,7 @@
 import pickle
 from collections import OrderedDict
 
+from src.api import RequestMode
 import stanza
 
 from src.api_modules.filtering_module import filter_matches
@@ -22,7 +23,7 @@ for lang in startup_languages:
         in_memory_terms[lang] = pickle.load(fp)
 
 
-def find_terms(doc_details, language: str = 'en') -> list:
+def find_terms(items, language: str = 'en', mode: RequestMode = RequestMode.SIMPLE) -> list:
     
     # Load model in memory
     if language in in_memory_models:
@@ -41,8 +42,9 @@ def find_terms(doc_details, language: str = 'en') -> list:
             terms = pickle.load(fp)
         in_memory_terms.popitem(last=False)
         in_memory_terms[language] = terms
-    # To get the set of values, we get the keys
-    in_docs = [stanza.Document([], text=d) for d in doc_details.keys()]
+
+    docs = items if mode == RequestMode.SIMPLE else items.keys()
+    in_docs = [stanza.Document([], text=d) for d in docs]
     out_docs = nlp(in_docs)
     filtered_matches = []
 
@@ -52,9 +54,10 @@ def find_terms(doc_details, language: str = 'en') -> list:
             matches = find_matches(sentence, terms)
             filtered_matches.extend(filter_matches(sentence, matches))
 
-    return [{
-        'type': 'Annotation',
-        'motivation': 'highlighting',
+    results_list = []
+    
+    if mode == RequestMode.SIMPLE:
+        results_list = [{
         'body': match[0],
         'target': {
             'language': language,
@@ -64,4 +67,16 @@ def find_terms(doc_details, language: str = 'en') -> list:
                 'end': match[2]
             }
         }
-    } for match in filtered_matches]
+        } for match in filtered_matches]
+    else:
+        # TODO finalize this part
+        results_list = [{
+            # TODO add actual id somehow
+            'id' = 'generatedId'
+            'type' = 'Annotation',
+            'motivation' = 'highlighting',
+            'body': match[0],
+        } for match in filtered_matches]
+    
+    return results_list
+    

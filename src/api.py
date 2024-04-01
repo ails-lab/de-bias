@@ -1,8 +1,21 @@
+from enum import Enum
+from datetime import datetime
 from fastapi import FastAPI
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 from src.api_modules.main_module import find_terms
 
+class RequestParams(BaseModel):
+    limitPerPredicate: int
+    language: str
+    provenance: bool
+
+class DetailedRequest(BaseModel):
+    context: list = Field(alias="@context")
+    type: str
+    params: RequestParams
+    total_items: int = Field(alias="totalItems")
+    items: list
 
 class SimpleRequest(BaseModel):
     language: str
@@ -23,21 +36,58 @@ class SimpleResponse(BaseModel):
     body: str
     target: Target
 
+class RequestMode(Enum):
+    SIMPLE = 1,
+    DETAILED = 2
+
+class DetailedResponsePartOf(BaseModel):
+    type: str = "AnnotationCollection"
+    modified: datetime = datetime.now()
+
+class ItemTargetSelectorRefinedByExact(BaseModel):
+    value: str = Field(alias="@value")
+    language: str = Field(alias="@language")
+
+class ItemTargetSelectorRefinedBy(BaseModel):
+    type: str
+    exact: ItemTargetSelectorRefinedByExact
+
+class ItemTargetSelector(BaseModel):
+    type: str
+    predicate: str
+    refined_by: ItemTargetSelectorRefinedBy = Field(alias="refinedBy")
+    prefix: str
+    suffix: str
+    
+class DetailedResponseItemTarget(BaseModel):
+    source: str
+    selector: ItemTargetSelector
+
+class DetailedResponseItem(BaseModel):
+    id: str
+    type: str
+    motivation: str
+    body: str
+    target: DetailedResponseItemTarget
+
+class DetailedResponse(BaseModel):
+    context: list = Field(alias="@context")
+    type: str = "AnnotationPage"
+    part_of: DetailedResponsePartOf = Field(alias= "partOf")
+    items: list[DetailedResponseItem]
 
 app = FastAPI()
 
 
-@app.post('/')
+@app.post('/simple')
 async def simple_request(request: SimpleRequest) -> list[SimpleResponse]:
-    request_json = request.json()
+    docs = request.values
+    language = request.language
+    filtered_matches = find_terms(docs, language)
+    return filtered_matches
 
-    # Extracting the necessary information from the request
-    context = request_json['@context']
-    limitPerPredicate = request_json['params']['limitPerPredicate']
-    language = request_json['params']['language']
-    provenance = request_json['params']['provenance']
-    total_items = request_json['totalItems']
-    items = request_json['items']
+@app.post('/')
+async def detailed_request(request: DetailedRequest) -> DetailedResponse:
 
     ''' 
     The doc details dict will have as key a value to be debiased.
@@ -69,8 +119,7 @@ async def simple_request(request: SimpleRequest) -> list[SimpleResponse]:
         "another second sample title": [ { "item_id": "12345/XPTO_2", "property": "dc:title" } ],
         "another second sample description": [ { "item_id": "12345/XPTO_2", "property": "dc:description" } ]
     }
-
-'''
+    '''
 
     doc_details = {}
     for item in items:
@@ -89,5 +138,11 @@ async def simple_request(request: SimpleRequest) -> list[SimpleResponse]:
     ''' instead of raw text, we need to pass the doc_details dict to the find_terms function
         so that we can keep reference of which term belongs to which record
     '''
-    filtered_matches = find_terms(doc_details, language)
-    return filtered_matches
+    filtered_matches = find_terms(doc_details, request.language, RequestMode.DETAILED)
+
+    response = DetailedResponse()
+    response.context = request.context
+    response.part_of = DetailedResponsePartOf()
+    response.items = filtered_matches
+    
+    return response
