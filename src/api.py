@@ -58,7 +58,7 @@ class ItemTargetSelector(BaseModel):
     refined_by: ItemTargetSelectorRefinedBy = Field(alias="refinedBy")
     prefix: str
     suffix: str
-    
+
 class DetailedResponseItemTarget(BaseModel):
     source: str
     selector: ItemTargetSelector
@@ -122,13 +122,12 @@ async def detailed_request(request: DetailedRequest) -> DetailedResponse:
     '''
 
     doc_details = {}
-    for item in items:
+    for item in request.items:
         # the keys of the request e.g. dc:description (item properties) are not predefined
         # so we need to get them dynamically
-        dict_keys = item.keys()
+        dict_keys = item.keys() - {'id'}
         id = item['id']
-        dict_keys_cleaned = [key for key in dict_keys if key != 'id']
-        for key in dict_keys_cleaned:
+        for key in dict_keys:
             val_lst = item[key]
             for val in val_lst:
                 if val not in doc_details:
