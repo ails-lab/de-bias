@@ -42,7 +42,7 @@ stanza_models_kwargs = {
         'processors': 'tokenize, mwt, pos, ner, german_compound_noun_splitter, standardize, delayedlemma',
         'package': 'default_accurate',
         'delayedlemma_model_path': os.path.join(STANZA_RESOURCES_DIR,
-                                                'de/lemma/gsd_charlm.pt'),
+                                                'de/lemma/gsd_charlm_customized.pt'),
         'delayedlemma_forward_charlm_path': os.path.join(STANZA_RESOURCES_DIR,
                                                          'de/forward_charlm/newswiki.pt'),
         'delayedlemma_backward_charlm_path': os.path.join(STANZA_RESOURCES_DIR,

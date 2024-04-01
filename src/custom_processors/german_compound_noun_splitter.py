@@ -30,7 +30,7 @@ class GermanCompNounSplitterProcessor(Processor):
             for token in sent.tokens:
                 new_word_list = []
                 for word in token.words:
-                    if word.upos == 'NOUN':
+                    if word.upos in ['NOUN', 'PROPN']:
                         try:
                             dissection = comp_split.dissect(
                                 word.text, self._ahocs, make_singular=True)
@@ -45,7 +45,7 @@ class GermanCompNounSplitterProcessor(Processor):
                             for part in dissection:
                                 new_word_dict = {
                                     'id': word_id,
-                                    'text': part,
+                                    'text': part.lower(),
                                     'lemma': part.lower(),
                                     'upos': upos,
                                     'xpos': xpos,
@@ -55,6 +55,7 @@ class GermanCompNounSplitterProcessor(Processor):
                                 new_word = Word(sent, new_word_dict)
                                 new_word_list.append(new_word)
                         else:
+                            word.text = word.text.lower()
                             word.id = word_id
                             word_id += 1
                             new_word_list.append(word)
