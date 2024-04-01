@@ -2,7 +2,7 @@ import pickle
 from collections import OrderedDict
 import uuid
 
-from src.api import RequestMode
+from src.api_helper_classes import RequestMode
 import stanza
 
 from src.api_modules.filtering_module import filter_matches
