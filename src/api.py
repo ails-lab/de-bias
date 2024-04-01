@@ -3,6 +3,8 @@ from datetime import datetime
 from fastapi import FastAPI
 from pydantic import BaseModel, Field
 
+from typing import List, Optional
+
 from src.api_modules.main_module import find_terms
 
 class RequestParams(BaseModel):
@@ -46,22 +48,37 @@ class DetailedResponsePartOf(BaseModel):
 
 class ItemTargetSelectorRefinedByExact(BaseModel):
     value: str = Field(alias="@value")
-    language: str = Field(alias="@language")
+    language: Optional[str] = Field(alias="@language")
 
 class ItemTargetSelectorRefinedBy(BaseModel):
-    type: str
+    type: str = 'TextQuoteSelector'
     exact: ItemTargetSelectorRefinedByExact
 
 class ItemTargetSelector(BaseModel):
-    type: str
+    type: str = 'RDFStatementSelector'
     predicate: str
     refined_by: ItemTargetSelectorRefinedBy = Field(alias="refinedBy")
-    prefix: str
-    suffix: str
+    prefix: Optional[str]
+    suffix: Optional[str]
 
 class DetailedResponseItemTarget(BaseModel):
     source: str
     selector: ItemTargetSelector
+
+    def __init__(self, source, predicate, value, language = None, prefix = None, suffix = None):
+        selector = ItemTargetSelector()
+        selector.predicate = predicate
+        refined_by = ItemTargetSelectorRefinedBy()
+        exact = ItemTargetSelectorRefinedByExact()
+        exact.value = value
+        exact.language = language
+        refined_by.exact = exact
+        selector.refined_by = refined_by
+        selector.prefix = prefix
+        selector.suffix = suffix
+        self.source = source
+        self.selector = selector
+        
 
 class DetailedResponseItem(BaseModel):
     id: str

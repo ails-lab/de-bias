@@ -1,5 +1,6 @@
 import pickle
 from collections import OrderedDict
+import uuid
 
 from src.api import RequestMode
 import stanza
@@ -70,13 +71,21 @@ def find_terms(items, language: str = 'en', mode: RequestMode = RequestMode.SIMP
         } for match in filtered_matches]
     else:
         # TODO finalize this part
-        results_list = [{
-            # TODO add actual id somehow
-            'id' = 'generatedId'
-            'type' = 'Annotation',
-            'motivation' = 'highlighting',
-            'body': match[0],
-        } for match in filtered_matches]
+        results_list = []
+
+        for match in filtered_matches:
+            result = {
+                'id': str(uuid.uuid4()),
+                'type': 'Annotation',
+                'motivation': 'highlighting',
+                'body': match[0],
+            }
+            # TODO
+            target = DetailedResponseItemTarget()
+            result['target'] = target
+
+            results_list.append(result)
+
     
     return results_list
     
