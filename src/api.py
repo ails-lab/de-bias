@@ -70,9 +70,17 @@ async def detailed_request(request: DetailedRequest) -> DetailedResponse:
     '''
     filtered_matches = find_terms(doc_details, request.language, RequestMode.DETAILED)
 
-    response = DetailedResponse()
-    response.context = request.context
-    response.part_of = DetailedResponsePartOf()
-    response.items = filtered_matches
-    
+    response = {
+        "@context": request.context,
+        "partOf": DetailedResponsePartOf(),
+        "items": []
+    }
+
+    # response = {
+    #     "@context": request.context,
+    #     "partOf": DetailedResponsePartOf(),
+    #     "items": filtered_matches
+    # }
+
     return response
+

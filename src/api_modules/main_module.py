@@ -70,19 +70,47 @@ def find_terms(items, language: str = 'en', mode: RequestMode = RequestMode.SIMP
         }
         } for match in filtered_matches]
     else:
-        # TODO finalize this part
         results_list = []
 
         for match in filtered_matches:
+
+            # Initialize the result with the basic values
             result = {
                 'id': str(uuid.uuid4()),
                 'type': 'Annotation',
                 'motivation': 'highlighting',
                 'body': match[0],
             }
+
             # TODO
-            target = DetailedResponseItemTarget()
-            result['target'] = target
+            '''
+            I initialized the dictionary with sample values. For each match, we need to fill this 
+            with actual values.
+
+            The "prefix" and "suffix" should also be stated unless the text fragment is at the 
+            start or at the end of the value. The minimum character length of both prefix and 
+            suffix (separately) should be 50 characters. If the 50th character happens to be 
+            in the middle of a word, then the complete word should be included respecting this 
+            way the 50 characters minimum.
+            '''
+            target = {
+                "source": "record id of item",
+                "selector": {
+                    "type": "RDFStatementSelector",
+                    "predicate": "example dc:description",
+                    "refinedBy": {
+                        "type": "TextQuoteSelector",
+                        "exact": {
+                            "@value": "exact value of term that we found",
+                            "@language": "language"
+                        },
+                        "prefix": "prefix goes here",
+                        "suffix": "suffix goes here"
+                    }
+                }
+            }
+
+            result['target'] = [target]
 
             results_list.append(result)
 
