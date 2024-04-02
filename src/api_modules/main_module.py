@@ -2,7 +2,7 @@ import pickle
 from collections import OrderedDict
 import uuid
 
-from src.api_helper_classes import RequestMode
+from src.utils.api_helper_classes import RequestMode
 import stanza
 
 from src.api_modules.filtering_module import filter_matches
@@ -11,6 +11,7 @@ from src.utils.settings import stanza_models_kwargs, startup_languages, processe
 # need to import in order to log these as stanza processors
 # ORDER MATTERS for some godforsaken reason
 from src.custom_processors import german_compound_noun_splitter, standardize, delayed_lemmatizer
+
 
 in_memory_models = OrderedDict({
     lang: stanza.Pipeline(lang, download_method=None, **stanza_models_kwargs[lang])
