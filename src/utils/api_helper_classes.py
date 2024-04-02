@@ -1,3 +1,5 @@
+from dataclasses import dataclass
+
 from pydantic import BaseModel, Field
 
 from typing import Optional, Literal
@@ -26,9 +28,9 @@ class SimpleResponse(BaseModel):
     target: Target
 
 
-class Context(BaseModel):
-    uri: str
-    base: Literal["http://data.europeana.eu/item/"] = Field(alias="@base")
+# class Context(BaseModel):
+#     uri: str
+#     base: Literal["http://data.europeana.eu/item/"] = Field(alias="@base")
 
 
 class RequestParams(BaseModel):
@@ -42,7 +44,7 @@ class DetailedRequestItem(BaseModel):
 
 
 class DetailedRequest(BaseModel):
-    context: Context = Field(alias="@context")
+    context: list = Field(alias="@context")
     type: Literal["Request"]
     params: RequestParams
     total_items: int | None = Field(None, alias="totalItems")
@@ -51,58 +53,58 @@ class DetailedRequest(BaseModel):
 
 
 class DetailedResponsePartOf(BaseModel):
-    type: str = "AnnotationCollection"
+    type: Literal["AnnotationCollection"]
     modified: datetime = datetime.now()
 
 
 class ItemTargetSelectorRefinedByExact(BaseModel):
     value: str = Field(alias="@value")
-    language: Optional[str] = Field(alias="@language")
+    language: str = Field(alias="@language")
 
 
 class ItemTargetSelectorRefinedBy(BaseModel):
-    type: str = 'TextQuoteSelector'
+    type: Literal["TextQuoteSelector"]
     exact: ItemTargetSelectorRefinedByExact
 
 
 class ItemTargetSelector(BaseModel):
-    type: str = 'RDFStatementSelector'
+    type: Literal["RDFStatementSelector"]
     predicate: str
     refined_by: ItemTargetSelectorRefinedBy = Field(alias="refinedBy")
-    prefix: Optional[str]
-    suffix: Optional[str]
+    prefix: str | None
+    suffix: str | None
 
 
 class DetailedResponseItemTarget(BaseModel):
     source: str
     selector: ItemTargetSelector
-
-    def __init__(self, source, predicate, value, language=None, prefix=None, suffix=None):
-        selector = ItemTargetSelector()
-        selector.predicate = predicate
-        refined_by = ItemTargetSelectorRefinedBy()
-        exact = ItemTargetSelectorRefinedByExact()
-        exact.value = value
-        exact.language = language
-        refined_by.exact = exact
-        selector.refined_by = refined_by
-        selector.prefix = prefix
-        selector.suffix = suffix
-        self.source = source
-        self.selector = selector
+    #
+    # def __init__(self, source, predicate, value, language=None, prefix=None, suffix=None):
+    #     selector = ItemTargetSelector()
+    #     selector.predicate = predicate
+    #     refined_by = ItemTargetSelectorRefinedBy()
+    #     exact = ItemTargetSelectorRefinedByExact()
+    #     exact.value = value
+    #     exact.language = language
+    #     refined_by.exact = exact
+    #     selector.refined_by = refined_by
+    #     selector.prefix = prefix
+    #     selector.suffix = suffix
+    #     self.source = source
+    #     self.selector = selector
 
 
 class DetailedResponseItem(BaseModel):
     id: str
-    type: str
-    motivation: str
+    type: Literal["Annotation"]
+    motivation: Literal["highlighting"]
     body: str
     target: DetailedResponseItemTarget
 
 
 class DetailedResponse(BaseModel):
     context: list = Field(alias="@context")
-    type: str = "AnnotationPage"
+    type: Literal["AnnotationPage"]
     part_of: DetailedResponsePartOf = Field(alias="partOf")
     items: list[DetailedResponseItem]
 
@@ -110,3 +112,12 @@ class DetailedResponse(BaseModel):
 class RequestMode(Enum):
     SIMPLE = 1,
     DETAILED = 2
+
+
+@dataclass(frozen=True)
+class Match:
+    term: str
+    start_char: int
+    end_char: int
+    sentence_id: int
+    word_id: int

@@ -10,7 +10,7 @@ app = FastAPI()
 
 
 # @app.post('/simple')
-# async def simple_request(request: SimpleRequest) -> list[SimpleResponse]:
+# async def simple_request(request: SimpleRequest) -> list[list[SimpleResponse]]:
 #     docs = request.values
 #     language = request.language
 #     filtered_matches = find_terms(docs, language)

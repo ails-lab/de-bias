@@ -2,7 +2,7 @@ import pickle
 from collections import OrderedDict
 import uuid
 
-from src.utils.api_helper_classes import RequestMode
+from src.utils.api_helper_classes import RequestMode, Match
 import stanza
 
 from src.api_modules.filtering_module import filter_matches
@@ -25,8 +25,7 @@ for lang in startup_languages:
         in_memory_terms[lang] = pickle.load(fp)
 
 
-def find_terms(items, language: str = 'en', mode: RequestMode = RequestMode.SIMPLE) -> list:
-    
+def find_terms(items, language: str = 'en', mode: RequestMode = RequestMode.SIMPLE):
     # Load model in memory
     if language in in_memory_models:
         nlp = in_memory_models[language]
@@ -48,39 +47,57 @@ def find_terms(items, language: str = 'en', mode: RequestMode = RequestMode.SIMP
     docs = items if mode == RequestMode.SIMPLE else items.keys()
     in_docs = [stanza.Document([], text=d) for d in docs]
     out_docs = nlp(in_docs)
-    filtered_matches = []
+    filtered_matches_by_doc = []
 
     # TODO: need to keep reference of original value somehow
     for doc in out_docs:
+        filtered_matches = []
         for sentence in doc.sentences:
             matches = find_matches(sentence, terms)
             filtered_matches.extend(filter_matches(sentence, matches))
+        filtered_matches_by_doc.append(filtered_matches)
 
     results_list = []
     
     if mode == RequestMode.SIMPLE:
-        results_list = [{
-        'body': match[0],
-        'target': {
-            'language': language,
-            'literal': match[0],
-            'position': {
-                'start': match[1],
-                'end': match[2]
-            }
-        }
-        } for match in filtered_matches]
-    else:
+        results_list = [
+            [{
+                'body': match.term,  # TODO: replace with term URI when it becomes available
+                'target': {
+                    'language': language,
+                    'literal': match.term,
+                    'position': {
+                        'start': match.start_char,
+                        'end': match.end_char
+                    }
+                }
+            } for match in matches]
+            for matches in filtered_matches_by_doc
+        ]
+    elif mode == RequestMode.DETAILED:
         results_list = []
-
-        for match in filtered_matches:
-
+        for matches, doc in zip(filtered_matches_by_doc, out_docs):
+            for match in matches:
+                # find prefix
+                start_char = match.start_char
+                left_char_index = start_char
+                left_word_index = match.word_id
+                left_sentence_index = match.sentence_id
+                # while left_char_index > start_char + 50:
+                #     if left_word_index > 0:
+                #         left_word_index -= 1
+                #         left_char_index = doc.sentences[left_sentence_index].words[left_word_index].
+                #     if left_word_index == 0:
+                #         left_sentence_index -= 1
+                #         left_word_index = doc.sentences[left_sentence_index]
+                prefix = doc.text[left_char_index:start_char]
+            # Return type: [[(term, prefix, suffix) for match] for doc]
             # Initialize the result with the basic values
             result = {
                 'id': str(uuid.uuid4()),
                 'type': 'Annotation',
                 'motivation': 'highlighting',
-                'body': match[0],
+                'body': match[0],  # TODO: Replace with term URI when it becomes available
             }
 
             # TODO
@@ -114,7 +131,8 @@ def find_terms(items, language: str = 'en', mode: RequestMode = RequestMode.SIMP
             result['target'] = [target]
 
             results_list.append(result)
-
+    else:
+        raise ValueError('Unexpected request mode')
     
     return results_list
     
