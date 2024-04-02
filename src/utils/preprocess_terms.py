@@ -16,7 +16,7 @@ def preprocess_terms(terms_filepath: str, savepath: str, language: str = 'en', r
     terms = terms.dropna()[0]
     in_terms = [stanza.Document([], text=t.strip()) for t in terms]
     nlp = stanza.Pipeline(language, download_method=None, **stanza_models_kwargs[language])
-    out_terms = nlp(in_terms)
+    out_terms = [nlp(d) for d in in_terms]
     # print([[(word.text, word.lemma)
     #         for sent in doc.sentences for word in sent.words]
     #        for doc in out_terms])

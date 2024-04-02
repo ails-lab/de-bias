@@ -7,7 +7,7 @@ def find_matches(sentence: stanza.models.common.doc.Sentence,
                  prefixed_terms: dict[str: list[str]]
                  ) -> list[Match]:
     matches = []
-    print(sentence.words)
+    # print(sentence.words)
     print(sentence.tokens)
     for word in sentence.words:
         if word.lemma not in prefixed_terms:

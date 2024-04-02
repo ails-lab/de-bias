@@ -23,3 +23,10 @@ class DelayedLemmaProcessor(LemmaProcessor):
             self._requires = DelayedLemmaProcessor.REQUIRES_DEFAULT.union({POS})
         else:
             self._requires = DelayedLemmaProcessor.REQUIRES_DEFAULT
+
+    def process(self, document):
+        document = super().process(document)
+        if self._pipeline.lang == 'de':
+            for sent in document.sentences:
+                for word in sent.words:
+                    word.lemma = word.lemma.lower()
