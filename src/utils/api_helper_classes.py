@@ -54,7 +54,7 @@ class DetailedRequest(BaseModel):
 
 class DetailedResponsePartOf(BaseModel):
     type: Literal["AnnotationCollection"]
-    modified: datetime = datetime.now()
+    modified: datetime
 
 
 class ItemTargetSelectorRefinedByExact(BaseModel):
@@ -119,5 +119,12 @@ class Match:
     term: str
     start_char: int
     end_char: int
-    sentence_id: int
+    sentence_index: int
     word_id: int
+
+
+@dataclass(frozen=True)
+class AnnotationMatch:
+    term: str
+    prefix: str
+    suffix: str

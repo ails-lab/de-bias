@@ -12,7 +12,7 @@ def filter_matches(sentence: stanza.models.common.doc.Sentence,
     entities = [(ent.text, ent.start_char, ent.end_char, ent.type)
                 for ent in sentence.ents if ent.type in ENTITY_TYPES]
 
-    print('entities', entities)
+    # print('entities', entities)
 
     for match in matches:
         for ent_text, ent_start_char, ent_end_char, ent_type in entities:
@@ -21,5 +21,5 @@ def filter_matches(sentence: stanza.models.common.doc.Sentence,
                 break
         else:
             filtered_matches.append(match)
-    print('filtered matches', filtered_matches)
+    # print('filtered matches', filtered_matches)
     return filtered_matches

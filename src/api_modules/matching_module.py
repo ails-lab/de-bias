@@ -1,14 +1,12 @@
 import stanza
 
-from src.utils.api_helper_classes import Match
-
 
 def find_matches(sentence: stanza.models.common.doc.Sentence,
                  prefixed_terms: dict[str: list[str]]
-                 ) -> list[Match]:
+                 ) -> list[tuple[str, int, int, int]]:
     matches = []
     # print(sentence.words)
-    print(sentence.tokens)
+    # print(sentence.tokens)
     for word in sentence.words:
         if word.lemma not in prefixed_terms:
             continue
@@ -22,13 +20,12 @@ def find_matches(sentence: stanza.models.common.doc.Sentence,
                     for term_lemma, sentence_word in zipped_term_text)):
                 continue
             matches.append(
-                Match(
+                (
                     ' '.join(lemmatized_term),
                     word.start_char,
                     sentence.words[word.id + term_len - 2].end_char,
-                    sentence.id,
                     word.id
                 )
             )
-    print('unfiltered matches', matches)
+    # print('unfiltered matches', matches)
     return matches

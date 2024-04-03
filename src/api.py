@@ -1,20 +1,22 @@
+import uuid
+from itertools import groupby
 from pprint import pprint
 
 from fastapi import FastAPI
 
 from src.utils.api_helper_classes import *
 
-# from src.api_modules.main_module import find_terms
+from src.api_modules.main_module import find_terms
 
 app = FastAPI()
 
 
-# @app.post('/simple')
-# async def simple_request(request: SimpleRequest) -> list[list[SimpleResponse]]:
-#     docs = request.values
-#     language = request.language
-#     filtered_matches = find_terms(docs, language)
-#     return filtered_matches
+@app.post('/simple')
+async def simple_request(request: SimpleRequest) -> list[list[SimpleResponse]]:
+    docs = request.values
+    language = request.language
+    filtered_matches = find_terms(docs, language, RequestMode.SIMPLE)
+    return filtered_matches
 
 
 @app.post('/')
@@ -53,7 +55,69 @@ async def detailed_request(request: DetailedRequest):
         "dc:description" } ]
     }
     """
-    pprint(request.model_dump())
+    # pprint(request.model_dump())
+    language = request.params.language
+    items = request.items
+    flattened_items = [
+        (field_value, field_name, item['id'])
+        for item in items
+        for field_name in item.keys() - {'id'}
+        for field_value in item[field_name]
+    ]
+    pprint(flattened_items)
+    filtered_matches = find_terms(
+        [item[0] for item in flattened_items], language, RequestMode.DETAILED
+    )
+    # print('filtered matches:')
+    # pprint(filtered_matches)
+    flattened_matches = [(item, match)
+                         for item, matches in zip(flattened_items, filtered_matches)
+                         for match in matches]
+    # print('flattened_matches')
+    # pprint(flattened_matches)
+    matches_by_item_and_term = groupby(sorted(flattened_matches,
+                                              key=lambda x: (x[0][2], x[1].term)),
+                                       key=lambda x: (x[0][2], x[1].term))
+    # pprint(matches_by_item_and_term)
+
+    response = {
+        "@context": request.context,
+        "type": "AnnotationPage",
+        "partOf": {
+            "type": "AnnotationCollection",
+            "modified": datetime.now()
+        }
+    }
+    response_items = [
+        {
+            "id": str(uuid.uuid4()),
+            "type": "Annotation",
+            "motivation": "highlighting",
+            "body": key[1],
+            "target": [
+                {
+                    "source": item[2],
+                    "selector": {
+                        "type": "RDFStatementSelector",
+                        "predicate": item[1],
+                        "refinedBy": {
+                            "type": "TextQuoteSelector",
+                            "exact": {
+                                "@value": match.term,
+                                "@language": language
+                            },
+                            "prefix": match.prefix,
+                            "suffix": match.suffix
+                        }
+                    }
+                }
+                for item, match in group
+            ]
+        }
+        for key, group in matches_by_item_and_term
+    ]
+
+    response["items"] = response_items
     # doc_details = {}
     # for item in request.items:
     #     # the keys of the request e.g. dc:description (item properties) are not predefined
@@ -84,4 +148,4 @@ async def detailed_request(request: DetailedRequest):
     # #     "items": filtered_matches
     # # }
     #
-    return {"message": "ok"}
+    return response

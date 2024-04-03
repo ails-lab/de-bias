@@ -2,7 +2,7 @@ import pickle
 from collections import OrderedDict
 import uuid
 
-from src.utils.api_helper_classes import RequestMode, Match
+from src.utils.api_helper_classes import RequestMode, Match, AnnotationMatch
 import stanza
 
 from src.api_modules.filtering_module import filter_matches
@@ -44,7 +44,7 @@ def find_terms(items, language: str = 'en', mode: RequestMode = RequestMode.SIMP
         in_memory_terms.popitem(last=False)
         in_memory_terms[language] = terms
 
-    docs = items if mode == RequestMode.SIMPLE else items.keys()
+    docs = items
     in_docs = [stanza.Document([], text=d) for d in docs]
     out_docs = nlp(in_docs)
     filtered_matches_by_doc = []
@@ -52,12 +52,11 @@ def find_terms(items, language: str = 'en', mode: RequestMode = RequestMode.SIMP
     # TODO: need to keep reference of original value somehow
     for doc in out_docs:
         filtered_matches = []
-        for sentence in doc.sentences:
-            matches = find_matches(sentence, terms)
+        for sentence_id, sentence in enumerate(doc.sentences):
+            matches = [Match(match[0], match[1], match[2], sentence_id, match[3])
+                       for match in find_matches(sentence, terms)]
             filtered_matches.extend(filter_matches(sentence, matches))
         filtered_matches_by_doc.append(filtered_matches)
-
-    results_list = []
     
     if mode == RequestMode.SIMPLE:
         results_list = [
@@ -74,65 +73,64 @@ def find_terms(items, language: str = 'en', mode: RequestMode = RequestMode.SIMP
             } for match in matches]
             for matches in filtered_matches_by_doc
         ]
+        return results_list
     elif mode == RequestMode.DETAILED:
         results_list = []
         for matches, doc in zip(filtered_matches_by_doc, out_docs):
+            matches_with_prefix_suffix = []
             for match in matches:
                 # find prefix
+                # print(doc.text)
+                # print(match)
                 start_char = match.start_char
-                left_char_index = start_char
-                left_word_index = match.word_id
-                left_sentence_index = match.sentence_id
-                # while left_char_index > start_char + 50:
-                #     if left_word_index > 0:
-                #         left_word_index -= 1
-                #         left_char_index = doc.sentences[left_sentence_index].words[left_word_index].
-                #     if left_word_index == 0:
-                #         left_sentence_index -= 1
-                #         left_word_index = doc.sentences[left_sentence_index]
-                prefix = doc.text[left_char_index:start_char]
-            # Return type: [[(term, prefix, suffix) for match] for doc]
-            # Initialize the result with the basic values
-            result = {
-                'id': str(uuid.uuid4()),
-                'type': 'Annotation',
-                'motivation': 'highlighting',
-                'body': match[0],  # TODO: Replace with term URI when it becomes available
-            }
-
-            # TODO
-            '''
-            I initialized the dictionary with sample values. For each match, we need to fill this 
-            with actual values.
-
-            The "prefix" and "suffix" should also be stated unless the text fragment is at the 
-            start or at the end of the value. The minimum character length of both prefix and 
-            suffix (separately) should be 50 characters. If the 50th character happens to be 
-            in the middle of a word, then the complete word should be included respecting this 
-            way the 50 characters minimum.
-            '''
-            target = {
-                "source": "record id of item",
-                "selector": {
-                    "type": "RDFStatementSelector",
-                    "predicate": "example dc:description",
-                    "refinedBy": {
-                        "type": "TextQuoteSelector",
-                        "exact": {
-                            "@value": "exact value of term that we found",
-                            "@language": "language"
-                        },
-                        "prefix": "prefix goes here",
-                        "suffix": "suffix goes here"
-                    }
-                }
-            }
-
-            result['target'] = [target]
-
-            results_list.append(result)
+                if start_char - 50 <= 0:
+                    prefix = doc.text[:start_char]
+                else:
+                    left_char_index = start_char
+                    left_word_index = match.word_id - 1  # word ids start at 1
+                    left_sentence_index = match.sentence_index
+                    while left_char_index > start_char - 50:
+                        if left_word_index > 0:
+                            left_word_index -= 1
+                            left_char_index = (doc.sentences[left_sentence_index]
+                                               .words[left_word_index].start_char)
+                        elif left_sentence_index > 0:
+                            left_sentence_index -= 1
+                            left_word_index = len(doc.sentences[left_sentence_index].words) - 1
+                            left_char_index = (doc.sentences[left_sentence_index]
+                                               .words[left_word_index].start_char)
+                        else:
+                            left_char_index = 0
+                            break
+                    prefix = doc.text[left_char_index:start_char]
+                # find suffix
+                end_char = match.end_char
+                if end_char + 50 >= len(doc.text) - 1:
+                    suffix = doc.text[end_char:]
+                else:
+                    right_char_index = end_char
+                    right_word_index = match.word_id - 1  # word ids start at 1
+                    right_sentence_index = match.sentence_index
+                    right_word_last_index = len(doc.sentences[right_sentence_index].words) - 1
+                    right_sentence_last_index = len(doc.sentences) - 1
+                    while right_char_index < end_char + 50:
+                        if right_word_index < right_word_last_index:
+                            right_word_index += 1
+                            right_char_index = (doc.sentences[right_sentence_index]
+                                                .words[right_word_index].end_char)
+                        elif right_sentence_index < right_sentence_last_index:
+                            right_sentence_index += 1
+                            right_word_index = 0
+                            right_word_last_index = len(doc.sentences[right_sentence_index].words) - 1
+                            right_char_index = (doc.sentences[right_sentence_index]
+                                                .words[0].end_char)
+                        else:
+                            right_char_index = None
+                            break
+                    suffix = doc.text[end_char:right_char_index]
+                matches_with_prefix_suffix.append(AnnotationMatch(match.term, prefix, suffix))
+            results_list.append(matches_with_prefix_suffix)
+        return results_list
     else:
         raise ValueError('Unexpected request mode')
-    
-    return results_list
     
