@@ -64,14 +64,14 @@ def find_terms(items, language: str = 'en', mode: RequestMode = RequestMode.SIMP
                 'body': match.term,  # TODO: replace with term URI when it becomes available
                 'target': {
                     'language': language,
-                    'literal': match.term,
+                    'literal': doc,
                     'position': {
                         'start': match.start_char,
                         'end': match.end_char
                     }
                 }
             } for match in matches]
-            for matches in filtered_matches_by_doc
+            for doc, matches in zip(items, filtered_matches_by_doc) 
         ]
         return results_list
     elif mode == RequestMode.DETAILED:
