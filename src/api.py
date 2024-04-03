@@ -20,7 +20,7 @@ async def simple_request(request: SimpleRequest) -> list[list[SimpleResponse]]:
 
 
 @app.post('/')
-async def detailed_request(request: DetailedRequest):
+async def detailed_request(request: DetailedRequest) -> DetailedResponse:
     """
     The doc details dict will have as key a value to be debiased.
     The value corresponding to the key is a list of dictionaries, each containing the item_id

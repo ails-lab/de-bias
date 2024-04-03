@@ -49,7 +49,7 @@ class DetailedRequest(BaseModel):
     params: RequestParams
     total_items: int | None = Field(None, alias="totalItems")
     # items: list[DetailedRequestItem]
-    items: list
+    items: list[dict[str, str]]
 
 
 class DetailedResponsePartOf(BaseModel):
@@ -65,33 +65,19 @@ class ItemTargetSelectorRefinedByExact(BaseModel):
 class ItemTargetSelectorRefinedBy(BaseModel):
     type: Literal["TextQuoteSelector"]
     exact: ItemTargetSelectorRefinedByExact
+    prefix: str | None
+    suffix: str | None
 
 
 class ItemTargetSelector(BaseModel):
     type: Literal["RDFStatementSelector"]
     predicate: str
     refined_by: ItemTargetSelectorRefinedBy = Field(alias="refinedBy")
-    prefix: str | None
-    suffix: str | None
 
 
 class DetailedResponseItemTarget(BaseModel):
     source: str
     selector: ItemTargetSelector
-    #
-    # def __init__(self, source, predicate, value, language=None, prefix=None, suffix=None):
-    #     selector = ItemTargetSelector()
-    #     selector.predicate = predicate
-    #     refined_by = ItemTargetSelectorRefinedBy()
-    #     exact = ItemTargetSelectorRefinedByExact()
-    #     exact.value = value
-    #     exact.language = language
-    #     refined_by.exact = exact
-    #     selector.refined_by = refined_by
-    #     selector.prefix = prefix
-    #     selector.suffix = suffix
-    #     self.source = source
-    #     self.selector = selector
 
 
 class DetailedResponseItem(BaseModel):
@@ -99,7 +85,7 @@ class DetailedResponseItem(BaseModel):
     type: Literal["Annotation"]
     motivation: Literal["highlighting"]
     body: str
-    target: DetailedResponseItemTarget
+    target: list[DetailedResponseItemTarget]
 
 
 class DetailedResponse(BaseModel):
