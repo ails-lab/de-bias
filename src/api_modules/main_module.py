@@ -65,7 +65,6 @@ def find_terms(items, language: str = 'en', mode: RequestMode = RequestMode.SIMP
             for match in matches:
                 tags.append({
                     'uri': match.term,  # TODO: replace with term URI when it becomes available
-                    'language': language,
                     'start': match.start_char,
                     'end': match.end_char,
                     'length': match.end_char - match.start_char

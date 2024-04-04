@@ -12,7 +12,7 @@ app = FastAPI()
 
 
 @app.post('/simple')
-async def simple_request(request: SimpleRequest) -> list[list[SimpleResponse]]:
+async def simple_request(request: SimpleRequest) -> SimpleResponse:
     docs = request.values
     language = request.language
     filtered_matches = find_terms(docs, language, RequestMode.SIMPLE)
@@ -23,7 +23,7 @@ async def simple_request(request: SimpleRequest) -> list[list[SimpleResponse]]:
         },
         "results": filtered_matches
     }
-    return filtered_matches
+    return response
 
 
 @app.post('/')

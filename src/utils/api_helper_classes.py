@@ -22,10 +22,24 @@ class Target(BaseModel):
     literal: str
     position: TextSpan
 
+class SimpleResponseMetadata(BaseModel):
+    annotator: str
+    thesaurus: Optional[str]
+    date: datetime
 
+class SimpleResponseItemTag(BaseModel):
+    uri: str
+    start: int
+    end: int
+    length: int
+
+class SimpleResponseItem(BaseModel):
+    language: str
+    literal: str
+    tags: list[SimpleResponseItemTag]
 class SimpleResponse(BaseModel):
-    body: str
-    target: Target
+    metadata: SimpleResponseMetadata
+    results: list[SimpleResponseItem]
 
 
 # class Context(BaseModel):
