@@ -59,21 +59,23 @@ def find_terms(items, language: str = 'en', mode: RequestMode = RequestMode.SIMP
         filtered_matches_by_doc.append(filtered_matches)
     
     if mode == RequestMode.SIMPLE:
-        results_list = [
-            [{
-                'body': match.term,  # TODO: replace with term URI when it becomes available
-                'target': {
-                    'language': language,
-                    'literal': doc,
-                    'position': {
-                        'start': match.start_char,
-                        'end': match.end_char
-                    }
-                }
-            } for match in matches]
-            for doc, matches in zip(items, filtered_matches_by_doc) 
-        ]
-        return results_list
+        results = []
+        for doc, matches in zip(items,filtered_matches_by_doc):
+            tags = []
+            for match in matches:
+                tags.append({
+                    'uri': match.term,  # TODO: replace with term URI when it becomes available
+                    'start': match.start_char,
+                    'end': match.end_char,
+                    'length': match.end_char - match.start_char
+                })
+            result = {
+                'language': language,
+                'literal': doc,
+                'tags': tags
+            }
+            results.append(result)
+        return results
     elif mode == RequestMode.DETAILED:
         results_list = []
         for matches, doc in zip(filtered_matches_by_doc, out_docs):

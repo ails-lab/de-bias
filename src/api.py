@@ -12,11 +12,18 @@ app = FastAPI()
 
 
 @app.post('/simple')
-async def simple_request(request: SimpleRequest) -> list[list[SimpleResponse]]:
+async def simple_request(request: SimpleRequest) -> SimpleResponse:
     docs = request.values
     language = request.language
     filtered_matches = find_terms(docs, language, RequestMode.SIMPLE)
-    return filtered_matches
+    response = {
+        "metadata": {
+            "annotator": "de-bias",
+            "date": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+        },
+        "results": filtered_matches
+    }
+    return response
 
 
 @app.post('/')
