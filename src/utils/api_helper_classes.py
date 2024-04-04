@@ -2,7 +2,7 @@ from dataclasses import dataclass
 
 from pydantic import BaseModel, Field
 
-from typing import Optional, Literal
+from typing import Literal
 from datetime import datetime
 from enum import Enum
 
@@ -22,10 +22,12 @@ class Target(BaseModel):
     literal: str
     position: TextSpan
 
+
 class SimpleResponseMetadata(BaseModel):
     annotator: str
-    thesaurus: Optional[str]
+    thesaurus: str | None = None
     date: datetime
+
 
 class SimpleResponseItemTag(BaseModel):
     uri: str
@@ -33,10 +35,13 @@ class SimpleResponseItemTag(BaseModel):
     end: int
     length: int
 
+
 class SimpleResponseItem(BaseModel):
     language: str
     literal: str
     tags: list[SimpleResponseItemTag]
+
+
 class SimpleResponse(BaseModel):
     metadata: SimpleResponseMetadata
     results: list[SimpleResponseItem]
