@@ -16,6 +16,13 @@ async def simple_request(request: SimpleRequest) -> list[list[SimpleResponse]]:
     docs = request.values
     language = request.language
     filtered_matches = find_terms(docs, language, RequestMode.SIMPLE)
+    response = {
+        "metadata": {
+            "annotator": "de-bias",
+            "date": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+        },
+        "results": filtered_matches
+    }
     return filtered_matches
 
 
