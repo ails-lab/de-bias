@@ -49,7 +49,7 @@ class DetailedRequest(BaseModel):
     params: RequestParams
     total_items: int | None = Field(None, alias="totalItems")
     # items: list[DetailedRequestItem]
-    items: list[dict[str, str]]
+    items: list[dict[str, str | list[str]]]
 
 
 class DetailedResponsePartOf(BaseModel):
