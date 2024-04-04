@@ -25,7 +25,7 @@ for lang in startup_languages:
         in_memory_terms[lang] = pickle.load(fp)
 
 
-def find_terms(items, language: str = 'en', mode: RequestMode = RequestMode.SIMPLE):
+def find_terms(docs, language: str = 'en', mode: RequestMode = RequestMode.SIMPLE):
     # Load model in memory
     if language in in_memory_models:
         nlp = in_memory_models[language]
@@ -44,12 +44,10 @@ def find_terms(items, language: str = 'en', mode: RequestMode = RequestMode.SIMP
         in_memory_terms.popitem(last=False)
         in_memory_terms[language] = terms
 
-    docs = items
     in_docs = [stanza.Document([], text=d) for d in docs]
     out_docs = nlp(in_docs)
     filtered_matches_by_doc = []
 
-    # TODO: need to keep reference of original value somehow
     for doc in out_docs:
         filtered_matches = []
         for sentence_id, sentence in enumerate(doc.sentences):
@@ -71,7 +69,7 @@ def find_terms(items, language: str = 'en', mode: RequestMode = RequestMode.SIMP
                     }
                 }
             } for match in matches]
-            for doc, matches in zip(items, filtered_matches_by_doc) 
+            for doc, matches in zip(docs, filtered_matches_by_doc)
         ]
         return results_list
     elif mode == RequestMode.DETAILED:
