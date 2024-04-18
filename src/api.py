@@ -82,9 +82,9 @@ async def detailed_request(request: DetailedRequest) -> DetailedResponse:
                          for match in matches]
     # print('flattened_matches')
     # pprint(flattened_matches)
-    matches_by_item_and_term = groupby(sorted(flattened_matches,
-                                              key=lambda x: (x[0][2], x[1].term)),
-                                       key=lambda x: (x[0][2], x[1].term))
+    matches_by_item_and_uri = groupby(sorted(flattened_matches,
+                                             key=lambda x: (x[0][2], x[1].uri)),
+                                      key=lambda x: (x[0][2], x[1].uri))
     # pprint(matches_by_item_and_term)
 
     response = {
@@ -121,7 +121,7 @@ async def detailed_request(request: DetailedRequest) -> DetailedResponse:
                 for item, match in group
             ]
         }
-        for key, group in matches_by_item_and_term
+        for key, group in matches_by_item_and_uri
     ]
 
     response["items"] = response_items

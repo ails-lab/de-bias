@@ -100,7 +100,7 @@ class DetailedResponseItemTarget(BaseModel):
 
 
 class DetailedResponseItem(BaseModel):
-    id: str
+    # id: str
     type: Literal["Annotation"]
     motivation: Literal["highlighting"]
     body: str
@@ -133,3 +133,4 @@ class AnnotationMatch:
     term: str
     prefix: str
     suffix: str
+    uri: str

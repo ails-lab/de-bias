@@ -129,7 +129,12 @@ def find_terms(items, language: str = 'en', mode: RequestMode = RequestMode.SIMP
                             right_char_index = None
                             break
                     suffix = doc.text[end_char:right_char_index]
-                matches_with_prefix_suffix.append(AnnotationMatch(match.term, prefix, suffix))
+                matches_with_prefix_suffix.append(
+                    AnnotationMatch(match.term,
+                                    prefix,
+                                    suffix,
+                                    'http://example.com/{}'.format(urllib.parse.quote(match.term)))
+                )
             results_list.append(matches_with_prefix_suffix)
         return results_list
     else:
