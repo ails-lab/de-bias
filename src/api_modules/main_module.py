@@ -1,10 +1,9 @@
 import pickle
 from collections import OrderedDict
-import uuid
 
 from src.utils.api_helper_classes import RequestMode, Match, AnnotationMatch
 import stanza
-
+import urllib.parse
 from src.api_modules.filtering_module import filter_matches
 from src.api_modules.matching_module import find_matches
 from src.utils.settings import stanza_models_kwargs, startup_languages, processed_terms_filepaths
@@ -64,7 +63,7 @@ def find_terms(items, language: str = 'en', mode: RequestMode = RequestMode.SIMP
             tags = []
             for match in matches:
                 tags.append({
-                    'uri': match.term,  # TODO: replace with term URI when it becomes available
+                    'uri': "http://example.com/{}".format(urllib.parse.quote(match.term)),  # TODO: replace with term URI when it becomes available
                     'start': match.start_char,
                     'end': match.end_char,
                     'length': match.end_char - match.start_char
