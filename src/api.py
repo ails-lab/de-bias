@@ -97,7 +97,7 @@ async def detailed_request(request: DetailedRequest) -> DetailedResponse:
     }
     response_items = [
         {
-            "id": str(uuid.uuid4()),
+            # "id": str(uuid.uuid4()),
             "type": "Annotation",
             "motivation": "highlighting",
             "body": key[1],
