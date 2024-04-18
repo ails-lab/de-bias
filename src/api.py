@@ -110,7 +110,7 @@ async def detailed_request(request: DetailedRequest) -> DetailedResponse:
                         "refinedBy": {
                             "type": "TextQuoteSelector",
                             "exact": {
-                                "@value": match.term,
+                                "@value": match.term,  # TODO: is value the term or the text?
                                 "@language": language
                             },
                             "prefix": match.prefix,
