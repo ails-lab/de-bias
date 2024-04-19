@@ -131,6 +131,6 @@ class Match:
 @dataclass(frozen=True)
 class AnnotationMatch:
     term: str
-    prefix: str
-    suffix: str
+    prefix: str | None
+    suffix: str | None
     uri: str

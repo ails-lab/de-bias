@@ -1,5 +1,5 @@
 import uuid
-from itertools import groupby
+from itertools import groupby, islice
 from pprint import pprint
 
 from fastapi import FastAPI
@@ -12,6 +12,7 @@ from src.api_modules.main_module import find_terms
 
 app = FastAPI()
 app.add_middleware(GZipMiddleware)
+
 
 @app.post('/simple')
 async def simple_request(request: SimpleRequest) -> SimpleResponse:
@@ -66,6 +67,7 @@ async def detailed_request(request: DetailedRequest) -> DetailedResponse:
     """
     # pprint(request.model_dump())
     language = request.params.language
+    limit_per_predicate = request.params.limit_per_predicate
     items = request.items
     flattened_items = [
         (field_value, field_name, item['id'])
@@ -115,46 +117,16 @@ async def detailed_request(request: DetailedRequest) -> DetailedResponse:
                                 "@value": match.term,  # TODO: is value the term or the text?
                                 "@language": language
                             },
-                            "prefix": match.prefix,
-                            "suffix": match.suffix
+                            "prefix": match.prefix if match.prefix != "" else None,
+                            "suffix": match.suffix if match.suffix != "" else None
                         }
                     }
                 }
-                for item, match in group
+                for item, match in islice(group, limit_per_predicate)
             ]
         }
         for key, group in matches_by_item_and_uri
     ]
 
     response["items"] = response_items
-    # doc_details = {}
-    # for item in request.items:
-    #     # the keys of the request e.g. dc:description (item properties) are not predefined
-    #     # so we need to get them dynamically
-    #     dict_keys = item.keys() - {'id'}
-    #     item_id = item['id']
-    #     for key in dict_keys:
-    #         val_lst = item[key]
-    #         for val in val_lst:
-    #             if val not in doc_details:
-    #                 doc_details[val] = []
-    #             doc_details[val].append({'item_id': item_id, 'property': key})
-    #
-    # ''' instead of raw text, we need to pass the doc_details dict to the find_terms function
-    #     so that we can keep reference of which term belongs to which record
-    # '''
-    # filtered_matches = find_terms(doc_details, request.language, RequestMode.DETAILED)
-    #
-    # response = {
-    #     "@context": request.context,
-    #     "partOf": DetailedResponsePartOf(),
-    #     "items": []
-    # }
-    #
-    # # response = {
-    # #     "@context": request.context,
-    # #     "partOf": DetailedResponsePartOf(),
-    # #     "items": filtered_matches
-    # # }
-    #
     return response
