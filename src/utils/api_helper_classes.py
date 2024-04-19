@@ -90,7 +90,7 @@ class ItemTargetSelectorRefinedBy(BaseModel):
 
 class ItemTargetSelector(BaseModel):
     type: Literal["RDFStatementSelector"]
-    predicate: str
+    hasPredicate: str
     refined_by: ItemTargetSelectorRefinedBy = Field(alias="refinedBy")
 
 

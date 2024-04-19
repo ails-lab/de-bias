@@ -106,7 +106,7 @@ async def detailed_request(request: DetailedRequest) -> DetailedResponse:
                     "source": item[2],
                     "selector": {
                         "type": "RDFStatementSelector",
-                        "predicate": item[1],
+                        "hasPredicate": item[1],
                         "refinedBy": {
                             "type": "TextQuoteSelector",
                             "exact": {
