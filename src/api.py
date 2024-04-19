@@ -3,13 +3,15 @@ from itertools import groupby
 from pprint import pprint
 
 from fastapi import FastAPI
+from fastapi.middleware.gzip import GZipMiddleware
+
 
 from src.utils.api_helper_classes import *
 
 from src.api_modules.main_module import find_terms
 
 app = FastAPI()
-
+app.add_middleware(GZipMiddleware)
 
 @app.post('/simple')
 async def simple_request(request: SimpleRequest) -> SimpleResponse:
