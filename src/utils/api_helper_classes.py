@@ -84,8 +84,8 @@ class ItemTargetSelectorRefinedByExact(BaseModel):
 class ItemTargetSelectorRefinedBy(BaseModel):
     type: Literal["TextQuoteSelector"]
     exact: ItemTargetSelectorRefinedByExact
-    prefix: str | None
-    suffix: str | None
+    prefix: str
+    suffix: str
 
 
 class ItemTargetSelector(BaseModel):

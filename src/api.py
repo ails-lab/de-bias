@@ -87,7 +87,7 @@ async def detailed_request(request: DetailedRequest) -> DetailedResponse:
     # print('flattened_matches')
     # pprint(flattened_matches)
     matches_by_item_and_uri = groupby(sorted(flattened_matches,
-                                             key=lambda x: (x[0][2], x[1].uri)),
+                                             key=lambda x: (x[0][2], x[1].uri, x[0][1])),
                                       key=lambda x: (x[0][2], x[1].uri))
     # pprint(matches_by_item_and_term)
 
@@ -110,19 +110,21 @@ async def detailed_request(request: DetailedRequest) -> DetailedResponse:
                     "source": item[2],
                     "selector": {
                         "type": "RDFStatementSelector",
-                        "hasPredicate": item[1],
+                        "hasPredicate": predicate,
                         "refinedBy": {
                             "type": "TextQuoteSelector",
                             "exact": {
                                 "@value": match.term,  # TODO: is value the term or the text?
                                 "@language": language
                             },
-                            "prefix": match.prefix if match.prefix != "" else None,
-                            "suffix": match.suffix if match.suffix != "" else None
+                            "prefix": match.prefix,
+                            "suffix": match.suffix
                         }
                     }
                 }
-                for item, match in islice(group, limit_per_predicate)
+                # for item, match in group
+                for predicate, predicate_group in groupby(group, key=lambda x: x[0][1])
+                for item, match in islice(predicate_group, limit_per_predicate)
             ]
         }
         for key, group in matches_by_item_and_uri
