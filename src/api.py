@@ -4,6 +4,7 @@ from pprint import pprint
 
 from fastapi import FastAPI
 from fastapi.middleware.gzip import GZipMiddleware
+from fastapi.middleware.cors import CORSMiddleware
 
 
 from src.utils.api_helper_classes import *
@@ -12,6 +13,13 @@ from src.api_modules.main_module import find_terms
 
 app = FastAPI()
 app.add_middleware(GZipMiddleware)
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 
 @app.post('/simple')
