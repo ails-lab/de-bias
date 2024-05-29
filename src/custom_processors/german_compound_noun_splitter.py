@@ -30,7 +30,11 @@ class GermanCompNounSplitterProcessor(Processor):
             for token in sent.tokens:
                 new_word_list = []
                 for word in token.words:
-                    if word.upos in ['NOUN', 'PROPN']:
+                    if word.upos not in ['NOUN', 'PROPN']:
+                        word.id = word_id
+                        word_id += 1
+                        new_word_list.append(word)
+                    else:
                         try:
                             dissection = comp_split.dissect(
                                 word.text, self._ahocs, make_singular=True)
@@ -38,7 +42,12 @@ class GermanCompNounSplitterProcessor(Processor):
                             print(e)
                             dissection = [word.text]
                         print(dissection)
-                        if len(dissection) > 1:
+                        if len(dissection) <= 1:
+                            word.text = word.text.lower()
+                            word.id = word_id
+                            word_id += 1
+                            new_word_list.append(word)
+                        else:
                             upos = word.upos
                             xpos = word.xpos
                             feats = word.feats
@@ -54,15 +63,6 @@ class GermanCompNounSplitterProcessor(Processor):
                                 word_id += 1
                                 new_word = Word(sent, new_word_dict)
                                 new_word_list.append(new_word)
-                        else:
-                            word.text = word.text.lower()
-                            word.id = word_id
-                            word_id += 1
-                            new_word_list.append(word)
-                    else:
-                        word.id = word_id
-                        word_id += 1
-                        new_word_list.append(word)
                 token.words = new_word_list
                 token.id = tuple(word.id for word in new_word_list)
             sent.words = list(itertools.chain.from_iterable(token.words for token in sent.tokens))
