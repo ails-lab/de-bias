@@ -17,7 +17,7 @@ def filter_matches(sentence: stanza.models.common.doc.Sentence,
     for match in matches:
         for ent_text, ent_start_char, ent_end_char, ent_type in entities:
             if ent_start_char <= match.start_char and match.end_char <= ent_end_char:
-                print('Term {} is part of entity {}'.format(match.term, ent_text))
+                print('Term {} is part of entity {}'.format(match.term_uri, ent_text))
                 break
         else:
             filtered_matches.append(match)

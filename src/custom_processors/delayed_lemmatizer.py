@@ -26,7 +26,12 @@ class DelayedLemmaProcessor(LemmaProcessor):
 
     def process(self, document):
         document = super().process(document)
+        for sent in document.sentences:
+            for word in sent.words:
+                if word.lemma is None:
+                    word.lemma = word.text.lower()
         if self._pipeline.lang == 'de':
             for sent in document.sentences:
                 for word in sent.words:
                     word.lemma = word.lemma.lower()
+        return document

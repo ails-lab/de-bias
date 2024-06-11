@@ -64,7 +64,7 @@ async def detailed_request(request: DetailedRequest) -> DetailedResponse:
         for field_name in item.keys() - {'id'}
         for field_value in item[field_name]
     ]
-    pprint(flattened_items)
+    # pprint(flattened_items)
     filtered_matches = find_terms(
         [item[0] for item in flattened_items], language, RequestMode.DETAILED
     )
@@ -76,8 +76,8 @@ async def detailed_request(request: DetailedRequest) -> DetailedResponse:
     # print('flattened_matches')
     # pprint(flattened_matches)
     matches_by_item_and_term = groupby(sorted(flattened_matches,
-                                              key=lambda x: (x[0][2], x[1].term)),
-                                       key=lambda x: (x[0][2], x[1].term))
+                                              key=lambda x: (x[0][2], x[1].term_uri)),
+                                       key=lambda x: (x[0][2], x[1].term_uri))
     # pprint(matches_by_item_and_term)
 
     response = {
@@ -103,7 +103,7 @@ async def detailed_request(request: DetailedRequest) -> DetailedResponse:
                         "refinedBy": {
                             "type": "TextQuoteSelector",
                             "exact": {
-                                "@value": match.term,
+                                "@value": match.text,
                                 "@language": language
                             },
                             "prefix": match.prefix,

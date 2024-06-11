@@ -36,13 +36,16 @@ def find_terms(docs, language: str = 'en', mode: RequestMode = RequestMode.SIMPL
         in_memory_models[language] = nlp
 
     if language in in_memory_terms:
-        terms = in_memory_terms[language]
+        terms = in_memory_terms[language]['processed_terms']
+        term_context = in_memory_terms[language]['term_context']
         in_memory_terms.move_to_end(language)
     else:
         with open(processed_terms_filepaths[language], 'rb') as fp:
             terms = pickle.load(fp)
         in_memory_terms.popitem(last=False)
         in_memory_terms[language] = terms
+        term_context = terms['term_context']
+        terms = terms['processed_terms']
 
     in_docs = [stanza.Document([], text=d) for d in docs]
     out_docs = nlp(in_docs)
@@ -51,7 +54,8 @@ def find_terms(docs, language: str = 'en', mode: RequestMode = RequestMode.SIMPL
     for doc in out_docs:
         filtered_matches = []
         for sentence_id, sentence in enumerate(doc.sentences):
-            matches = [Match(match[0], match[1], match[2], sentence_id, match[3])
+            matches = [Match(match[0], doc.text[match[1]:match[2]], match[1], match[2],
+                             sentence_id, match[3])
                        for match in find_matches(sentence, terms)]
             filtered_matches.extend(filter_matches(sentence, matches))
         filtered_matches_by_doc.append(filtered_matches)
@@ -59,7 +63,7 @@ def find_terms(docs, language: str = 'en', mode: RequestMode = RequestMode.SIMPL
     if mode == RequestMode.SIMPLE:
         results_list = [
             [{
-                'body': match.term,  # TODO: replace with term URI when it becomes available
+                'body': match.term_uri,
                 'target': {
                     'language': language,
                     'literal': doc,
@@ -126,7 +130,8 @@ def find_terms(docs, language: str = 'en', mode: RequestMode = RequestMode.SIMPL
                             right_char_index = None
                             break
                     suffix = doc.text[end_char:right_char_index]
-                matches_with_prefix_suffix.append(AnnotationMatch(match.term, prefix, suffix))
+                matches_with_prefix_suffix.append(AnnotationMatch(match.term_uri, match.text,
+                                                                  prefix, suffix))
             results_list.append(matches_with_prefix_suffix)
         return results_list
     else:
