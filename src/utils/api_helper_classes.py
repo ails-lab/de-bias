@@ -121,7 +121,8 @@ class RequestMode(Enum):
 
 @dataclass(frozen=True)
 class Match:
-    term: str
+    term_uri: str
+    text: str
     start_char: int
     end_char: int
     sentence_index: int
@@ -130,7 +131,7 @@ class Match:
 
 @dataclass(frozen=True)
 class AnnotationMatch:
-    term: str
-    prefix: str | None
-    suffix: str | None
-    uri: str
+    term_uri: str
+    text: str
+    prefix: str
+    suffix: str

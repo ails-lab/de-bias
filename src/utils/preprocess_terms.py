@@ -12,22 +12,29 @@ from src.custom_processors import german_compound_noun_splitter, standardize, de
 
 def preprocess_terms(terms_filepath: str, savepath: str, language: str = 'en', ret: bool = False)\
         -> Optional[dict]:
-    terms = pd.read_csv(terms_filepath, header=None)
-    terms = terms.dropna()[0]
-    in_terms = [stanza.Document([], text=t.strip()) for t in terms]
+    df = pd.read_csv(terms_filepath, dtype={'disambiguation': bool})
+    terms = df['term']
+    in_terms = [stanza.Document([], text=t.strip().lower()) for t in terms]
     nlp = stanza.Pipeline(language, download_method=None, **stanza_models_kwargs[language])
     out_terms = [nlp(d) for d in in_terms]
+    for i, term in enumerate(out_terms):
+        if term is None:
+            print(i)
+            print(in_terms[i].text)
     # print([[(word.text, word.lemma)
     #         for sent in doc.sentences for word in sent.words]
     #        for doc in out_terms])
     lemmatized_terms = ([word.lemma
-                         for sent in doc.sentences for word in sent.words]
-                        for doc in out_terms)
+                         for sent in doc.sentences for word in sent.words] + [uri]
+                        for doc, uri in zip(out_terms, df['uri']))
     sorted_terms = sorted(lemmatized_terms, key=lambda x: x[0])
     grouped_terms = groupby(sorted_terms, key=lambda x: x[0])
     prefixed_terms = {prefix: list(term_lemmas) for prefix, term_lemmas in grouped_terms}
+    term_context = {row['uri']: row for row in df.to_dict(orient='records')}
     with open(savepath, 'wb') as fp:
-        pickle.dump(prefixed_terms, fp)
+        pickle.dump({'processed_terms': prefixed_terms,
+                     'term_context': term_context},
+                    fp)
     if ret:
         return prefixed_terms
 

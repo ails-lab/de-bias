@@ -24,7 +24,7 @@ for lang in startup_languages:
         in_memory_terms[lang] = pickle.load(fp)
 
 
-def find_terms(items, language: str = 'en', mode: RequestMode = RequestMode.SIMPLE):
+def find_terms(docs, language: str = 'en', mode: RequestMode = RequestMode.SIMPLE):
     # Load model in memory
     if language in in_memory_models:
         nlp = in_memory_models[language]
@@ -35,15 +35,17 @@ def find_terms(items, language: str = 'en', mode: RequestMode = RequestMode.SIMP
         in_memory_models[language] = nlp
 
     if language in in_memory_terms:
-        terms = in_memory_terms[language]
+        terms = in_memory_terms[language]['processed_terms']
+        term_context = in_memory_terms[language]['term_context']
         in_memory_terms.move_to_end(language)
     else:
         with open(processed_terms_filepaths[language], 'rb') as fp:
             terms = pickle.load(fp)
         in_memory_terms.popitem(last=False)
         in_memory_terms[language] = terms
+        term_context = terms['term_context']
+        terms = terms['processed_terms']
 
-    docs = items
     in_docs = [stanza.Document([], text=d) for d in docs]
     out_docs = nlp(in_docs)
     filtered_matches_by_doc = []
@@ -52,18 +54,19 @@ def find_terms(items, language: str = 'en', mode: RequestMode = RequestMode.SIMP
     for doc in out_docs:
         filtered_matches = []
         for sentence_id, sentence in enumerate(doc.sentences):
-            matches = [Match(match[0], match[1], match[2], sentence_id, match[3])
+            matches = [Match(match[0], doc.text[match[1]:match[2]], match[1], match[2],
+                             sentence_id, match[3])
                        for match in find_matches(sentence, terms)]
             filtered_matches.extend(filter_matches(sentence, matches))
         filtered_matches_by_doc.append(filtered_matches)
     
     if mode == RequestMode.SIMPLE:
         results = []
-        for doc, matches in zip(items,filtered_matches_by_doc):
+        for doc, matches in zip(docs,filtered_matches_by_doc):
             tags = []
             for match in matches:
                 tags.append({
-                    'uri': "http://example.com/{}".format(urllib.parse.quote(match.term)),  # TODO: replace with term URI when it becomes available
+                    'uri': match.term_uri,
                     'start': match.start_char,
                     'end': match.end_char,
                     'length': match.end_char - match.start_char
@@ -129,12 +132,8 @@ def find_terms(items, language: str = 'en', mode: RequestMode = RequestMode.SIMP
                             right_char_index = None
                             break
                     suffix = doc.text[end_char:right_char_index]
-                matches_with_prefix_suffix.append(
-                    AnnotationMatch(match.term,
-                                    prefix,
-                                    suffix,
-                                    'http://example.com/{}'.format(urllib.parse.quote(match.term)))
-                )
+                matches_with_prefix_suffix.append(AnnotationMatch(match.term_uri, match.text,
+                                                                  prefix, suffix))
             results_list.append(matches_with_prefix_suffix)
         return results_list
     else:
