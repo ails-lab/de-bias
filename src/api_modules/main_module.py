@@ -48,6 +48,7 @@ def find_terms(docs, language: str = 'en', mode: RequestMode = RequestMode.SIMPL
 
     in_docs = [stanza.Document([], text=d) for d in docs]
     out_docs = nlp(in_docs)
+    # print(out_docs)
     filtered_matches_by_doc = []
 
     # TODO: need to keep reference of original value somehow
