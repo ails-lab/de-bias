@@ -14,7 +14,7 @@ def preprocess_terms(terms_filepath: str, savepath: str, language: str = 'en', r
         -> Optional[dict]:
     df = pd.read_csv(terms_filepath, dtype={'disambiguation': bool})
     terms = df['term']
-    in_terms = [stanza.Document([], text=t.strip().lower()) for t in terms]
+    in_terms = [stanza.Document([], text=t.strip()) for t in terms]
     nlp = stanza.Pipeline(language, download_method=None, **stanza_models_kwargs[language])
     out_terms = [nlp(d) for d in in_terms]
     for i, term in enumerate(out_terms):
