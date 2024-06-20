@@ -26,7 +26,9 @@ app.add_middleware(
 async def simple_request(request: SimpleRequest) -> SimpleResponse:
     docs = request.values
     language = request.language
-    filtered_matches = find_terms(docs, language, RequestMode.SIMPLE)
+    use_ner = request.use_ner
+    use_llm = request.use_llm
+    filtered_matches = find_terms(docs, language, RequestMode.SIMPLE, use_ner, use_llm)
     response = {
         "metadata": {
             "annotator": "de-bias",
@@ -76,6 +78,8 @@ async def detailed_request(request: DetailedRequest) -> DetailedResponse:
     # pprint(request.model_dump())
     language = request.params.language
     limit_per_predicate = request.params.limit_per_predicate
+    use_ner = request.params.use_ner
+    use_llm = request.params.use_llm
     items = request.items
     flattened_items = [
         (field_value, field_name, item['id'])
@@ -85,7 +89,7 @@ async def detailed_request(request: DetailedRequest) -> DetailedResponse:
     ]
     # pprint(flattened_items)
     filtered_matches = find_terms(
-        [item[0] for item in flattened_items], language, RequestMode.DETAILED
+        [item[0] for item in flattened_items], language, RequestMode.DETAILED, use_ner, use_llm
     )
     # print('filtered matches:')
     # pprint(filtered_matches)

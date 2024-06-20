@@ -1,36 +1,38 @@
 import pickle
 from collections import OrderedDict
 
+from src.api_modules.llm_filtering_module import llm_filtering
 from src.utils.api_helper_classes import RequestMode, Match, AnnotationMatch
 import stanza
 import urllib.parse
-from src.api_modules.filtering_module import filter_matches
+from src.api_modules.ner_filtering_module import ner_filtering
 from src.api_modules.matching_module import find_matches
-from src.utils.settings import stanza_models_kwargs, startup_languages, processed_terms_filepaths
+from src.utils.settings import STANZA_MODELS_KWARGS, STARTUP_LANGUAGES, PROCESSED_TERMS_FILEPATHS
 # need to import in order to log these as stanza processors
 # ORDER MATTERS for some godforsaken reason
 from src.custom_processors import german_compound_noun_splitter, standardize, delayed_lemmatizer
 
 
 in_memory_models = OrderedDict({
-    lang: stanza.Pipeline(lang, download_method=None, **stanza_models_kwargs[lang])
-    for lang in startup_languages
+    lang: stanza.Pipeline(lang, download_method=None, **STANZA_MODELS_KWARGS[lang])
+    for lang in STARTUP_LANGUAGES
 })
 
 in_memory_terms = OrderedDict()
 
-for lang in startup_languages:
-    with open(processed_terms_filepaths[lang], 'rb') as fp:
+for lang in STARTUP_LANGUAGES:
+    with open(PROCESSED_TERMS_FILEPATHS[lang], 'rb') as fp:
         in_memory_terms[lang] = pickle.load(fp)
 
 
-def find_terms(docs, language: str = 'en', mode: RequestMode = RequestMode.SIMPLE):
+def find_terms(docs, language: str = 'en', mode: RequestMode = RequestMode.SIMPLE,
+               use_ner: bool = True, use_llm: bool = False):
     # Load model in memory
     if language in in_memory_models:
         nlp = in_memory_models[language]
         in_memory_models.move_to_end(language)
     else:
-        nlp = stanza.Pipeline(language, download_method=None, **stanza_models_kwargs[language])
+        nlp = stanza.Pipeline(language, download_method=None, **STANZA_MODELS_KWARGS[language])
         in_memory_models.popitem(last=False)
         in_memory_models[language] = nlp
 
@@ -39,7 +41,7 @@ def find_terms(docs, language: str = 'en', mode: RequestMode = RequestMode.SIMPL
         term_context = in_memory_terms[language]['term_context']
         in_memory_terms.move_to_end(language)
     else:
-        with open(processed_terms_filepaths[language], 'rb') as fp:
+        with open(PROCESSED_TERMS_FILEPATHS[language], 'rb') as fp:
             terms = pickle.load(fp)
         in_memory_terms.popitem(last=False)
         in_memory_terms[language] = terms
@@ -58,7 +60,11 @@ def find_terms(docs, language: str = 'en', mode: RequestMode = RequestMode.SIMPL
             matches = [Match(match[0], doc.text[match[1]:match[2]], match[1], match[2],
                              sentence_id, match[3])
                        for match in find_matches(sentence, terms)]
-            filtered_matches.extend(filter_matches(sentence, matches))
+            if use_ner:
+                matches = ner_filtering(sentence, matches)
+            if use_llm:
+                matches = llm_filtering(doc.text, matches, term_context, language)
+            filtered_matches.extend(matches)
         filtered_matches_by_doc.append(filtered_matches)
     
     if mode == RequestMode.SIMPLE:

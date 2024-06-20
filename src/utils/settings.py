@@ -7,7 +7,7 @@ VOCABULARIES_PATH = os.getenv('VOCABULARIES_PATH')
 ENTITY_TYPES = ['PERSON', 'ORGANIZATION', 'LOCATION', 'PER', 'ORG', 'LOC', 'FAC', 'GPE', 'PRODUCT',
                 'EVENT', 'WORK_OF_ART', 'LAW', 'LANGUAGE']
 
-stanza_models_kwargs = {
+STANZA_MODELS_KWARGS = {
     'en': {
         'processors': 'tokenize, mwt, pos, ner, standardize, delayedlemma',
         'package': 'default_accurate',
@@ -60,7 +60,7 @@ stanza_models_kwargs = {
     }
 }
 
-startup_languages = [
+STARTUP_LANGUAGES = [
     'en',
     'it',
     'de',
@@ -68,7 +68,7 @@ startup_languages = [
     'nl'
 ]
 
-processed_terms_filepaths = {
+PROCESSED_TERMS_FILEPATHS = {
     'en': os.path.join(VOCABULARIES_PATH, 'en_vocab_from_graph_processed.pickle'),
     'fr': os.path.join(VOCABULARIES_PATH, 'fr_vocab_from_graph_processed.pickle'),
     'nl': os.path.join(VOCABULARIES_PATH, 'nl_vocab_from_graph_processed.pickle'),

@@ -1,0 +1,60 @@
+import os
+
+
+LLM_ENDPOINT = os.getenv('LLM_ENDPOINT') + 'completion'
+LLM_TYPE = 'completion'
+FILTER_AMBIGUOUS = True
+
+BASE_PAYLOAD = {
+    "stream": False,
+    "n_predict": 10,
+    "temperature": 0,
+    "stop": [
+        "</s>"
+    ],
+    "repeat_last_n": 0,
+    "repeat_penalty": 0,
+    "top_k": -1,
+    "top_p": 0,
+    "min_p": 0,
+    "tfs_z": 1,
+    "typical_p": 1,
+    "presence_penalty": 0,
+    "frequency_penalty": 0,
+    "cache_prompt": True,
+}
+BASE_HEADERS = {
+    'Content-Type': 'application/json'
+}
+
+POSITIVE_RESPONSES = {
+    'en': ('yes', 'Yes')
+}
+NEGATIVE_RESPONSES = {
+    'en': ('no', 'No')
+}
+
+COMPLETION_PROMPTS = {
+    'en': '''The term "{{term}}" can be contentious when used in some contexts. Here are some \
+reasons why "{{term}}" can be considered contentious:
+{{context}}"
+
+Question:
+Is "{{term}}" used in a contentious manner in the following text, {positive_response} or \
+{negative_response}?
+
+Text:
+{{text}}
+
+Answer:\n'''.format(positive_response=POSITIVE_RESPONSES['en'][0],
+                    negative_response=NEGATIVE_RESPONSES['en'][0])
+}
+
+CHAT_PROMPTS = {
+
+}
+
+LLM_PROMPTS = {
+    'completion': COMPLETION_PROMPTS,
+    'chat': CHAT_PROMPTS
+}[LLM_TYPE]

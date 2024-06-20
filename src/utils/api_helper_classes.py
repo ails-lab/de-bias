@@ -10,6 +10,8 @@ from enum import Enum
 class SimpleRequest(BaseModel):
     language: str
     values: list[str]
+    use_ner: bool = Field(True, alias="useNER")
+    use_llm: bool = Field(False, alias="useLLM")
 
 
 class TextSpan(BaseModel):
@@ -56,6 +58,8 @@ class RequestParams(BaseModel):
     limit_per_predicate: int | None = Field(None, alias="limitPerPredicate")
     language: str
     provenance: bool
+    use_ner: bool = Field(True, alias="useNER")
+    use_llm: bool = Field(False, alias="useLLM")
 
 
 class DetailedRequestItem(BaseModel):
