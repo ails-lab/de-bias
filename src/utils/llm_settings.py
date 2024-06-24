@@ -1,9 +1,11 @@
 import os
+import json
 
 
 LLM_ENDPOINT = os.getenv('LLM_ENDPOINT') + 'completion'
 LLM_TYPE = 'completion'
 FILTER_AMBIGUOUS = True
+LLM_PROMPTS_FILE = os.getenv('VOCABULARIES_PATH') + 'llm_prompts.json'
 
 BASE_PAYLOAD = {
     "stream": False,
@@ -50,11 +52,7 @@ Answer:\n'''.format(positive_response=POSITIVE_RESPONSES['en'][0],
                     negative_response=NEGATIVE_RESPONSES['en'][0])
 }
 
-CHAT_PROMPTS = {
 
-}
+with open(LLM_PROMPTS_FILE, 'r') as fp:
+    LLM_PROMPTS = json.load(fp)[LLM_TYPE]
 
-LLM_PROMPTS = {
-    'completion': COMPLETION_PROMPTS,
-    'chat': CHAT_PROMPTS
-}[LLM_TYPE]
