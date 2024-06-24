@@ -5,7 +5,7 @@ import json
 LLM_ENDPOINT = os.getenv('LLM_ENDPOINT') + 'completion'
 LLM_TYPE = 'completion'
 FILTER_AMBIGUOUS = True
-LLM_PROMPTS_FILE = os.getenv('VOCABULARIES_PATH') + 'llm_prompts.json'
+LLM_PROMPTS_FILE = os.path.join(os.getenv('VOCABULARIES_PATH'), 'llm_prompts.json')
 
 BASE_PAYLOAD = {
     "stream": False,
@@ -34,22 +34,6 @@ POSITIVE_RESPONSES = {
 }
 NEGATIVE_RESPONSES = {
     'en': ('no', 'No')
-}
-
-COMPLETION_PROMPTS = {
-    'en': '''The term "{{term}}" can be contentious when used in some contexts. Here are some \
-reasons why "{{term}}" can be considered contentious:
-{{context}}"
-
-Question:
-Is "{{term}}" used in a contentious manner in the following text, {positive_response} or \
-{negative_response}?
-
-Text:
-{{text}}
-
-Answer:\n'''.format(positive_response=POSITIVE_RESPONSES['en'][0],
-                    negative_response=NEGATIVE_RESPONSES['en'][0])
 }
 
 
