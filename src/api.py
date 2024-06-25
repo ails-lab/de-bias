@@ -75,7 +75,7 @@ async def detailed_request(request: DetailedRequest) -> DetailedResponse:
         "dc:description" } ]
     }
     """
-    # pprint(request.model_dump())
+    pprint(request.model_dump())
     language = request.params.language
     limit_per_predicate = request.params.limit_per_predicate
     use_ner = request.params.use_ner
