@@ -2,7 +2,7 @@ import os
 import json
 
 
-LLM_ENDPOINT = os.getenv('LLM_ENDPOINT') + 'completion'
+LLM_ENDPOINT = os.getenv('LLM_ENDPOINT') + '/completion'
 LLM_TYPE = 'completion'
 FILTER_AMBIGUOUS = True
 LLM_PROMPTS_FILE = os.path.join(os.getenv('VOCABULARIES_PATH'), 'llm_prompts.json')
