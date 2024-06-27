@@ -41,7 +41,7 @@ class GermanCompNounSplitterProcessor(Processor):
                         except Exception as e:
                             print(e)
                             dissection = [word.text]
-                        print(dissection)
+                        # print(dissection)
                         if len(dissection) <= 1:
                             word.text = word.text.lower()
                             word.id = word_id

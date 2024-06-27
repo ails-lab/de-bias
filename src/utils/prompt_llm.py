@@ -14,6 +14,6 @@ def prompt_llm(prompt):
                                 LLM_ENDPOINT,
                                 headers=BASE_HEADERS,
                                 data=json.dumps(payload))
-    print(response.text)
+    # print(response.text)
     response = response.json()
     return response['content']

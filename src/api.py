@@ -24,6 +24,7 @@ app.add_middleware(
 
 @app.post('/simple')
 async def simple_request(request: SimpleRequest) -> SimpleResponse:
+    pprint(request.model_dump())
     docs = request.values
     language = request.language
     use_ner = request.use_ner
