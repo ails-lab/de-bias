@@ -11,7 +11,7 @@ class SimpleRequest(BaseModel):
     language: str
     values: list[str]
     use_ner: bool = Field(True, alias="useNER")
-    use_llm: bool = Field(False, alias="useLLM")
+    use_llm: bool = Field(True, alias="useLLM")
 
 
 class TextSpan(BaseModel):
@@ -59,7 +59,7 @@ class RequestParams(BaseModel):
     language: str
     provenance: bool
     use_ner: bool = Field(True, alias="useNER")
-    use_llm: bool = Field(False, alias="useLLM")
+    use_llm: bool = Field(True, alias="useLLM")
 
 
 class DetailedRequestItem(BaseModel):

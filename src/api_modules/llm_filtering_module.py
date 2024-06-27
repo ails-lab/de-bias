@@ -19,15 +19,15 @@ def llm_filtering(doc: str,
                                positive_response=POSITIVE_RESPONSES[language][0],
                                negative_response=NEGATIVE_RESPONSES[language][0],
                                text=doc)
-        print(prompt)
+        # print(prompt)
         response = prompt_llm(prompt)
         if response.startswith(POSITIVE_RESPONSES[language]):
             filtered_matches.append(match)
         elif response.startswith(NEGATIVE_RESPONSES[language]):
-            print('Term {} was rejected by LLM'.format(match.text))
+            # print('Term {} was rejected by LLM'.format(match.text))
             continue
         else:
-            print('LLM gave ambiguous response "{}" for term {}'.format(response, match.text))
+            # print('LLM gave ambiguous response "{}" for term {}'.format(response, match.text))
             if not FILTER_AMBIGUOUS:
                 filtered_matches.append(match)
         # convert to yes or no

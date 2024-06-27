@@ -62,7 +62,7 @@ def find_terms(docs, language: str = 'en', mode: RequestMode = RequestMode.SIMPL
                        for match in find_matches(sentence, terms)]
             if use_ner:
                 matches = ner_filtering(sentence, matches)
-            if use_llm:
+            if use_llm and language != 'nl':  # LLM filtering switched off for Dutch
                 matches = llm_filtering(doc.text, matches, term_context, language)
             filtered_matches.extend(matches)
         filtered_matches_by_doc.append(filtered_matches)

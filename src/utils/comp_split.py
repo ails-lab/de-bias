@@ -157,7 +157,7 @@ def dissect(compound, ahocs, only_nouns=True, make_singular=False, mask_unknown=
     :return: list of strings, holding all the split words from the compound
     """
 
-    print('Dissect compound: ', compound)
+    # print('Dissect compound: ', compound)
 
     # dict of candidate words for splitting up the compound word
     # for each *end index* with substrings, the list of substrings is stored, i.e. all strings which end there
