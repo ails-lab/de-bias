@@ -7,7 +7,7 @@ import requests
 from src.utils.llm_settings import LLM_ENDPOINT, BASE_PAYLOAD, BASE_HEADERS
 
 
-def prompt_llm(prompt):
+def prompt_llm(prompt: str) -> str:
     payload = copy(BASE_PAYLOAD)
     payload['prompt'] = prompt
     response = requests.request('POST',
