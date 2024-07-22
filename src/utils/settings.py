@@ -68,7 +68,7 @@ STARTUP_LANGUAGES = [
     'en',
     'it',
     'de',
-    'fr',
+    # 'fr',
     'nl'
 ]
 
