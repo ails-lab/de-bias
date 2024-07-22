@@ -13,6 +13,9 @@ def llm_filtering(doc: str,
     filtered_matches = []
 
     for match in matches:
+        if not context[match.term_uri]['disambiguation']:
+            filtered_matches.append(match)
+            continue
         prompt = LLM_PROMPTS[language]
         prompt = prompt.format(term=match.text,
                                context=context[match.term_uri]['context'],
