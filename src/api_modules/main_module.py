@@ -50,6 +50,13 @@ def find_terms(docs, language: str = 'en', mode: RequestMode = RequestMode.SIMPL
 
     in_docs = [stanza.Document([], text=d) for d in docs]
     out_docs = nlp(in_docs)
+    # print('tokens')
+    # for doc in out_docs:
+    #     print(doc)
+    #     for sentence in doc.sentences:
+    #         for token in sentence.words:
+    #             print(token.text, end=' ')
+    #     print()
     # print(out_docs)
     filtered_matches_by_doc = []
 

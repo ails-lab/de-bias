@@ -32,14 +32,14 @@ BASE_HEADERS = {
 POSITIVE_RESPONSES = {
     'en': ('yes', 'Yes'),
     'fr': ('oui', 'Oui'),
-    'nl': ('ya', 'Ya'),
+    'nl': ('ja', 'Ja'),
     'it': ('sì', 'Sì'),
     'de': ('ja', 'Ja')
 }
 NEGATIVE_RESPONSES = {
     'en': ('no', 'No'),
     'fr': ('non', 'Non'),
-    'nl': ('nee', 'Nee'),
+    'nl': ('nee', 'Nee', 'neen', 'Neen'),
     'it': ('no', 'No'),
     'de': ('nein', 'Nein')
 }
