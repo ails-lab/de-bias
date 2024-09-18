@@ -9,6 +9,7 @@ ENTITY_TYPES = ['PERSON', 'ORGANIZATION', 'LOCATION', 'PER', 'ORG', 'LOC', 'FAC'
 
 STANZA_MODELS_KWARGS = {
     'en': {
+        'download_method': None,
         'processors': 'tokenize, mwt, pos, ner, standardize, delayedlemma',
         'package': 'default_accurate',
         'delayedlemma_model_path': os.path.join(STANZA_RESOURCES_DIR,
@@ -20,7 +21,7 @@ STANZA_MODELS_KWARGS = {
     },
     'fr': {
         'processors': 'tokenize, mwt, pos, ner, standardize, delayedlemma',
-        'package': 'default_accurate',
+        'package': 'default',
         'delayedlemma_model_path': os.path.join(STANZA_RESOURCES_DIR,
                                                 'fr/lemma/combined_charlm_customized.pt'),
         'delayedlemma_forward_charlm_path': os.path.join(STANZA_RESOURCES_DIR,
@@ -29,6 +30,7 @@ STANZA_MODELS_KWARGS = {
                                                           'fr/backward_charlm/newswiki.pt')
     },
     'nl': {
+        'download_method': None,
         'processors': 'tokenize, mwt, pos, ner, standardize, delayedlemma',
         'package': 'default_accurate',
         'delayedlemma_model_path': os.path.join(STANZA_RESOURCES_DIR,
@@ -39,6 +41,7 @@ STANZA_MODELS_KWARGS = {
                                                           'nl/backward_charlm/ccwiki.pt')
     },
     'de': {
+        'download_method': None,
         'processors': 'tokenize, mwt, pos, ner, german_compound_noun_splitter, standardize, delayedlemma',
         'package': 'default_accurate',
         'delayedlemma_model_path': os.path.join(STANZA_RESOURCES_DIR,
@@ -49,6 +52,7 @@ STANZA_MODELS_KWARGS = {
                                                           'de/backward_charlm/newswiki.pt')
         },
     'it': {
+        'download_method': None,
         'processors': 'tokenize, mwt, pos, ner, standardize, delayedlemma',
         'package': 'default_accurate',
         'delayedlemma_model_path': os.path.join(STANZA_RESOURCES_DIR,

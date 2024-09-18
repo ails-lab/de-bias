@@ -8,7 +8,7 @@ from src.utils.prompt_llm import prompt_llm
 def llm_filtering(doc: str,
                   matches: list[Match],
                   context: dict,
-                  language: str = 'en'):
+                  language: str = 'en') -> list[Match]:
 
     filtered_matches = []
 
@@ -23,7 +23,7 @@ def llm_filtering(doc: str,
                                negative_response=NEGATIVE_RESPONSES[language][0],
                                text=doc)
         # print(prompt)
-        response = prompt_llm(prompt)
+        response = prompt_llm(prompt).strip()
         if response.startswith(POSITIVE_RESPONSES[language]):
             filtered_matches.append(match)
         elif response.startswith(NEGATIVE_RESPONSES[language]):

@@ -47,4 +47,3 @@ NEGATIVE_RESPONSES = {
 
 with open(LLM_PROMPTS_FILE, 'r') as fp:
     LLM_PROMPTS = json.load(fp)[LLM_TYPE]
-
