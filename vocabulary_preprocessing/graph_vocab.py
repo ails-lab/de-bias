@@ -6,12 +6,14 @@ from rdflib import Graph
 from rdflib.namespace import RDF, SKOS, DCTERMS
 
 
-VOCABULARIES_PATH = os.getenv('VOCABULARIES_PATH')
+VOCABULARY_FILEPATHS = os.getenv('VOCABULARY_FILEPATHS').split(os.pathsep)
 
 
 g = Graph()
-g.parse(os.path.join(VOCABULARIES_PATH, '20240607-DE-BIAS-Vocabulary-Terms.ttl'))
-g.parse(os.path.join(VOCABULARIES_PATH, '20240607-DE-BIAS-Vocabulary-Issues.ttl'))
+for path in VOCABULARY_FILEPATHS:
+    g.parse(path)
+# g.parse(os.path.join(VOCABULARIES_PATH, '20240607-DE-BIAS-Vocabulary-Terms.ttl'))
+# g.parse(os.path.join(VOCABULARIES_PATH, '20240607-DE-BIAS-Vocabulary-Issues.ttl'))
 namespaces = dict(g.namespaces())
 
 issue_with_term = list(g.subject_objects(
