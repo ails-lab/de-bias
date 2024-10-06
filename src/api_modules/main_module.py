@@ -14,7 +14,7 @@ from src.custom_processors import german_compound_noun_splitter, standardize, de
 
 
 in_memory_models = OrderedDict({
-    lang: stanza.Pipeline(lang, download_method=None, **STANZA_MODELS_KWARGS[lang])
+    lang: stanza.Pipeline(lang, **STANZA_MODELS_KWARGS[lang])
     for lang in STARTUP_LANGUAGES
 })
 
@@ -32,7 +32,7 @@ def find_terms(docs, language: str = 'en', mode: RequestMode = RequestMode.SIMPL
         nlp = in_memory_models[language]
         in_memory_models.move_to_end(language)
     else:
-        nlp = stanza.Pipeline(language, download_method=None, **STANZA_MODELS_KWARGS[language])
+        nlp = stanza.Pipeline(language, **STANZA_MODELS_KWARGS[language])
         in_memory_models.popitem(last=False)
         in_memory_models[language] = nlp
 

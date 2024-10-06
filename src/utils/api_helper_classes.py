@@ -55,7 +55,7 @@ class SimpleResponse(BaseModel):
 
 
 class RequestParams(BaseModel):
-    limit_per_predicate: int | None = Field(None, alias="limitPerPredicate")
+    limit_per_predicate: int | None = Field(default=1, alias="limitPerPredicate")
     language: str
     provenance: bool
     use_ner: bool = Field(True, alias="useNER")
