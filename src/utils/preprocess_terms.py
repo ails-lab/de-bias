@@ -31,12 +31,14 @@ def preprocess_terms(terms_filepath: str, savepath: str, language: str = 'en', r
     grouped_terms = groupby(sorted_terms, key=lambda x: x[0])
     prefixed_terms = {prefix: list(term_lemmas) for prefix, term_lemmas in grouped_terms}
     term_context = {row['uri']: row for row in df.to_dict(orient='records')}
+    vocabulary = {
+        'processed_terms': prefixed_terms,
+        'term_context': term_context
+    }
     with open(savepath, 'wb') as fp:
-        pickle.dump({'processed_terms': prefixed_terms,
-                     'term_context': term_context},
-                    fp)
+        pickle.dump(vocabulary, fp)
     if ret:
-        return prefixed_terms
+        return vocabulary
 
 
 def main():
