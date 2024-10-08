@@ -31,6 +31,10 @@ def find_terms(docs, language: str = 'en', mode: RequestMode = RequestMode.SIMPL
     if language in in_memory_models:
         nlp = in_memory_models[language]
         in_memory_models.move_to_end(language)
+    elif language == 'corporate':
+        nlp = stanza.Pipeline('en', **STANZA_MODELS_KWARGS[language])
+        in_memory_models.popitem(last=False)
+        in_memory_models[language] = nlp
     else:
         nlp = stanza.Pipeline(language, **STANZA_MODELS_KWARGS[language])
         in_memory_models.popitem(last=False)
