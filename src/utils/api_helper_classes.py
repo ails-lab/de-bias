@@ -126,6 +126,7 @@ class RequestMode(Enum):
 @dataclass(frozen=True)
 class Match:
     term_uri: str
+    term_literal: str
     text: str
     start_char: int
     end_char: int
