@@ -7,7 +7,7 @@ import stanza
 import pandas as pd
 
 from src.utils.settings import STANZA_MODELS_KWARGS
-from src.custom_processors import german_compound_noun_splitter, standardize, delayed_lemmatizer
+from src.custom_processors import standardize, delayed_lemmatizer, german_compound_noun_splitter
 
 
 def preprocess_terms(terms_filepath: str, savepath: str, language: str = 'en', ret: bool = False)\
@@ -25,12 +25,12 @@ def preprocess_terms(terms_filepath: str, savepath: str, language: str = 'en', r
     #         for sent in doc.sentences for word in sent.words]
     #        for doc in out_terms])
     lemmatized_terms = ([word.lemma
-                         for sent in doc.sentences for word in sent.words] + [uri]
-                        for doc, uri in zip(out_terms, df['uri']))
+                         for sent in doc.sentences for word in sent.words] + [(term, uri)]
+                        for doc, term, uri in zip(out_terms, df['term'], df['uri']))
     sorted_terms = sorted(lemmatized_terms, key=lambda x: x[0])
     grouped_terms = groupby(sorted_terms, key=lambda x: x[0])
     prefixed_terms = {prefix: list(term_lemmas) for prefix, term_lemmas in grouped_terms}
-    term_context = {row['uri']: row for row in df.to_dict(orient='records')}
+    term_context = {(row['term'], row['uri']): row for row in df.to_dict(orient='records')}
     vocabulary = {
         'processed_terms': prefixed_terms,
         'term_context': term_context

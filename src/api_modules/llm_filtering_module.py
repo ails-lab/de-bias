@@ -13,12 +13,12 @@ def llm_filtering(doc: str,
     filtered_matches = []
 
     for match in matches:
-        if not context[match.term_uri]['disambiguation']:
+        if not context[(match.term_literal, match.term_uri)]['disambiguation']:
             filtered_matches.append(match)
             continue
         prompt = LLM_PROMPTS[language]
-        prompt = prompt.format(term=match.text,
-                               context=context[match.term_uri]['context'],
+        prompt = prompt.format(term=match.term_literal,
+                               context=context[(match.term_literal, match.term_uri)]['context'],
                                positive_response=POSITIVE_RESPONSES[language][0],
                                negative_response=NEGATIVE_RESPONSES[language][0],
                                text=doc)
