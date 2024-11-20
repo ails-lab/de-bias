@@ -246,7 +246,8 @@ def dissect(compound, ahocs, only_nouns=True, make_singular=False, mask_unknown=
     if only_nouns and results:
         # workaround to prevent unwanted behaviour (only nouns are eligible)
         results[0] = results[0][0].upper() + results[0][1:]
-        for ri in range(len(results) - 1):
+        ri = 0
+        while ri < len(results) - 1:
             if results[ri].islower():
                 merged = results[ri] + results[ri + 1].lower()
                 if ahocs.exists(merged):
@@ -261,6 +262,7 @@ def dissect(compound, ahocs, only_nouns=True, make_singular=False, mask_unknown=
                         aritfact_single_letter = results[ri]
                         results[ri-1] += aritfact_single_letter
                         results.remove(aritfact_single_letter)
+            ri += 1
 
     # if set, compute singular version of each split word
     if make_singular:

@@ -42,7 +42,7 @@ STANZA_MODELS_KWARGS = {
     },
     'de': {
         'download_method': None,
-        'processors': 'tokenize, mwt, pos, ner, german_compound_noun_splitter, standardize, delayedlemma',
+        'processors': 'tokenize, mwt, pos, ner, standardize, delayedlemma, german_compound_noun_splitter',
         'package': 'default_accurate',
         'delayedlemma_model_path': os.path.join(STANZA_RESOURCES_DIR,
                                                 'de/lemma/gsd_charlm_customized.pt'),
@@ -61,6 +61,17 @@ STANZA_MODELS_KWARGS = {
                                                          'it/forward_charlm/conll17.pt'),
         'delayedlemma_backward_charlm_path': os.path.join(STANZA_RESOURCES_DIR,
                                                           'it/backward_charlm/conll17.pt')
+    },
+    'corporate': {
+        'download_method': None,
+        'processors': 'tokenize, mwt, pos, ner, standardize, delayedlemma',
+        'package': 'default_accurate',
+        'delayedlemma_model_path': os.path.join(STANZA_RESOURCES_DIR,
+                                                'en/lemma/combined_charlm_customized.pt'),
+        'delayedlemma_forward_charlm_path': os.path.join(STANZA_RESOURCES_DIR,
+                                                         'en/forward_charlm/1billion.pt'),
+        'delayedlemma_backward_charlm_path': os.path.join(STANZA_RESOURCES_DIR,
+                                                          'en/backward_charlm/1billion.pt')
     }
 }
 
@@ -69,7 +80,8 @@ STARTUP_LANGUAGES = [
     'it',
     'de',
     'fr',
-    'nl'
+    'nl',
+    # 'corporate'
 ]
 
 PROCESSED_TERMS_FILEPATHS = {
@@ -77,5 +89,6 @@ PROCESSED_TERMS_FILEPATHS = {
     'fr': os.path.join(VOCABULARIES_PATH, 'fr_vocab_from_graph_processed.pickle'),
     'nl': os.path.join(VOCABULARIES_PATH, 'nl_vocab_from_graph_processed.pickle'),
     'de': os.path.join(VOCABULARIES_PATH, 'de_vocab_from_graph_processed.pickle'),
-    'it': os.path.join(VOCABULARIES_PATH, 'it_vocab_from_graph_processed.pickle')
+    'it': os.path.join(VOCABULARIES_PATH, 'it_vocab_from_graph_processed.pickle'),
+    'corporate': os.path.join(VOCABULARIES_PATH, 'corporate_bodies_en_processed.pickle')
 }

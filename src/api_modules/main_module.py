@@ -10,7 +10,7 @@ from src.api_modules.matching_module import find_matches
 from src.utils.settings import STANZA_MODELS_KWARGS, STARTUP_LANGUAGES, PROCESSED_TERMS_FILEPATHS
 # need to import in order to log these as stanza processors
 # ORDER MATTERS for some godforsaken reason
-from src.custom_processors import german_compound_noun_splitter, standardize, delayed_lemmatizer
+from src.custom_processors import standardize, delayed_lemmatizer, german_compound_noun_splitter
 
 
 in_memory_models = OrderedDict({
@@ -31,6 +31,10 @@ def find_terms(docs, language: str = 'en', mode: RequestMode = RequestMode.SIMPL
     if language in in_memory_models:
         nlp = in_memory_models[language]
         in_memory_models.move_to_end(language)
+    elif language == 'corporate':
+        nlp = stanza.Pipeline('en', **STANZA_MODELS_KWARGS[language])
+        in_memory_models.popitem(last=False)
+        in_memory_models[language] = nlp
     else:
         nlp = stanza.Pipeline(language, **STANZA_MODELS_KWARGS[language])
         in_memory_models.popitem(last=False)
@@ -64,8 +68,8 @@ def find_terms(docs, language: str = 'en', mode: RequestMode = RequestMode.SIMPL
     for doc in out_docs:
         filtered_matches = []
         for sentence_id, sentence in enumerate(doc.sentences):
-            matches = [Match(match[0], doc.text[match[1]:match[2]], match[1], match[2],
-                             sentence_id, match[3])
+            matches = [Match(match[0], match[1], doc.text[match[2]:match[3]], match[2], match[3],
+                             sentence_id, match[4])
                        for match in find_matches(sentence, terms)]
             if use_ner:
                 matches = ner_filtering(sentence, matches)
@@ -76,7 +80,7 @@ def find_terms(docs, language: str = 'en', mode: RequestMode = RequestMode.SIMPL
     
     if mode == RequestMode.SIMPLE:
         results = []
-        for doc, matches in zip(docs,filtered_matches_by_doc):
+        for doc, matches in zip(docs, filtered_matches_by_doc):
             tags = []
             for match in matches:
                 tags.append({

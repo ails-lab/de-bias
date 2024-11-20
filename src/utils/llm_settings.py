@@ -34,14 +34,16 @@ POSITIVE_RESPONSES = {
     'fr': ('oui', 'Oui'),
     'nl': ('ja', 'Ja'),
     'it': ('sì', 'Sì'),
-    'de': ('ja', 'Ja')
+    'de': ('ja', 'Ja'),
+    'corporate': ('yes', 'Yes')
 }
 NEGATIVE_RESPONSES = {
     'en': ('no', 'No'),
     'fr': ('non', 'Non'),
     'nl': ('nee', 'Nee', 'neen', 'Neen'),
     'it': ('no', 'No'),
-    'de': ('nein', 'Nein')
+    'de': ('nein', 'Nein'),
+    'corporate': ('no', 'No')
 }
 
 
