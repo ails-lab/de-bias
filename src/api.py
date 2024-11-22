@@ -2,7 +2,7 @@ import uuid
 from itertools import groupby, islice
 from pprint import pprint
 
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException
 from fastapi.middleware.gzip import GZipMiddleware
 from fastapi.middleware.cors import CORSMiddleware
 
@@ -29,7 +29,10 @@ async def simple_request(request: SimpleRequest) -> SimpleResponse:
     language = request.language
     use_ner = request.use_ner
     use_llm = request.use_llm
-    filtered_matches = find_terms(docs, language, RequestMode.SIMPLE, use_ner, use_llm)
+    try:
+        filtered_matches = find_terms(docs, language, RequestMode.SIMPLE, use_ner, use_llm)
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=e.args)
     response = {
         "metadata": {
             "annotator": "de-bias",
@@ -89,9 +92,12 @@ async def detailed_request(request: DetailedRequest) -> DetailedResponse:
         for field_value in item[field_name]
     ]
     # pprint(flattened_items)
-    filtered_matches = find_terms(
-        [item[0] for item in flattened_items], language, RequestMode.DETAILED, use_ner, use_llm
-    )
+    try:
+        filtered_matches = find_terms(
+            [item[0] for item in flattened_items], language, RequestMode.DETAILED, use_ner, use_llm
+        )
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=e.args)
     # print('filtered matches:')
     # pprint(filtered_matches)
     flattened_matches = [(item, match)

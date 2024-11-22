@@ -35,6 +35,9 @@ def find_terms(docs, language: str = 'en', mode: RequestMode = RequestMode.SIMPL
         nlp = stanza.Pipeline('en', **STANZA_MODELS_KWARGS[language])
         in_memory_models.popitem(last=False)
         in_memory_models[language] = nlp
+    elif language not in STANZA_MODELS_KWARGS:
+        raise ValueError('lang code not supported\n lang code must be one of '
+                         + ', '.join(list(STANZA_MODELS_KWARGS)))
     else:
         nlp = stanza.Pipeline(language, **STANZA_MODELS_KWARGS[language])
         in_memory_models.popitem(last=False)
