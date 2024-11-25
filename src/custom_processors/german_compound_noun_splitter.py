@@ -58,7 +58,9 @@ class GermanCompNounSplitterProcessor(Processor):
                                     'lemma': part.lower(),
                                     'upos': upos,
                                     'xpos': xpos,
-                                    'feats': feats
+                                    'feats': feats,
+                                    'start_char': token.start_char,
+                                    'end_char': token.end_char
                                 }
                                 word_id += 1
                                 new_word = Word(sent, new_word_dict)

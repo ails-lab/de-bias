@@ -123,7 +123,7 @@ class RequestMode(Enum):
     DETAILED = 2
 
 
-@dataclass(frozen=True)
+@dataclass
 class Match:
     term_uri: str
     term_literal: str

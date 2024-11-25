@@ -2,10 +2,12 @@ from itertools import zip_longest
 
 import stanza
 
+from src.utils.api_helper_classes import Match
+
 
 def find_matches(sentence: stanza.models.common.doc.Sentence,
                  prefixed_terms: dict[str: list[str]]
-                 ) -> list[tuple[str, str, int, int, int]]:
+                 ) -> list[Match]:
     matches = []
     # print(sentence.words)
     # print(sentence.tokens)
@@ -22,11 +24,13 @@ def find_matches(sentence: stanza.models.common.doc.Sentence,
                     for term_lemma, sentence_word in zipped_term_text)):
                 continue
             matches.append(
-                (
+                Match(
                     lemmatized_term[-1][1],  # term uri
                     lemmatized_term[-1][0],  # term literal
+                    None,
                     word.start_char,
                     sentence.words[word.id + term_len - 3].end_char,
+                    None,
                     word.id
                 )
             )

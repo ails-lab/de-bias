@@ -67,20 +67,20 @@ def find_terms(docs, language: str = 'en', mode: RequestMode = RequestMode.SIMPL
     # print(out_docs)
     filtered_matches_by_doc = []
 
-    # TODO: need to keep reference of original value somehow
     for doc in out_docs:
         filtered_matches = []
         for sentence_id, sentence in enumerate(doc.sentences):
-            matches = [Match(match[0], match[1], doc.text[match[2]:match[3]], match[2], match[3],
-                             sentence_id, match[4])
-                       for match in find_matches(sentence, terms)]
+            matches = find_matches(sentence, terms)
+            for match in matches:
+                match.sentence_index = sentence_id
+                match.text = doc.text[match.start_char:match.end_char]
             if use_ner:
                 matches = ner_filtering(sentence, matches)
             if use_llm:
                 matches = llm_filtering(doc.text, matches, term_context, language)
             filtered_matches.extend(matches)
         filtered_matches_by_doc.append(filtered_matches)
-    
+
     if mode == RequestMode.SIMPLE:
         results = []
         for doc, matches in zip(docs, filtered_matches_by_doc):
