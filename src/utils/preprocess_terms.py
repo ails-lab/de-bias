@@ -30,7 +30,13 @@ def preprocess_terms(terms_filepath: str, savepath: str, language: str = 'en', r
     sorted_terms = sorted(lemmatized_terms, key=lambda x: x[0])
     grouped_terms = groupby(sorted_terms, key=lambda x: x[0])
     prefixed_terms = {prefix: list(term_lemmas) for prefix, term_lemmas in grouped_terms}
-    term_context = {(row['term'], row['uri']): row for row in df.to_dict(orient='records')}
+    term_context = {}
+    for row in df.to_dict(orient='records'):
+        if (key := (row['term'], row['uri'])) not in term_context:
+            term_context[key] = row
+        else:
+            term_context[key]['context'] += ' ' + row['context']
+    # term_context = {(row['term'], row['uri']): row for row in df.to_dict(orient='records')}
     vocabulary = {
         'processed_terms': prefixed_terms,
         'term_context': term_context
