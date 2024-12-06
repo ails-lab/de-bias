@@ -35,6 +35,8 @@ word_dict['pervs'] = 'perv'
 word_dict['westerns'] = 'western'
 word_dict['paraphilias'] = 'paraphilia'
 word_dict['indians'] = 'indian'
+word_dict['maroons'] = 'maroon'
+word_dict['gipsy'] = word_dict['gipsies'] = 'gypsy'
 
 composite_dict[('woman', 'NOUN')] = composite_dict[('women', 'NOUN')] = 'man'
 composite_dict[('roots', 'NOUN')] = 'roots'
