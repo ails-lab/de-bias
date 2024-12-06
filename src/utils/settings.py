@@ -20,8 +20,9 @@ STANZA_MODELS_KWARGS = {
                                                           'en/backward_charlm/1billion.pt')
     },
     'fr': {
+        'download_method': None,
         'processors': 'tokenize, mwt, pos, ner, standardize, delayedlemma',
-        'package': 'default',
+        'package': 'default_accurate',
         'delayedlemma_model_path': os.path.join(STANZA_RESOURCES_DIR,
                                                 'fr/lemma/combined_charlm_customized.pt'),
         'delayedlemma_forward_charlm_path': os.path.join(STANZA_RESOURCES_DIR,
@@ -77,10 +78,10 @@ STANZA_MODELS_KWARGS = {
 
 STARTUP_LANGUAGES = [
     'en',
-    'it',
-    'de',
-    'fr',
-    'nl',
+    # 'it',
+    # 'de',
+    # 'fr',
+    # 'nl',
     # 'corporate'
 ]
 
