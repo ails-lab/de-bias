@@ -9,6 +9,7 @@ word_dict, composite_dict = model['dicts']
 
 word_dict['boys'] = word_dict['boyesse'] = word_dict['boyesses'] = 'boy'
 word_dict['évolué'] = word_dict['évolués'] = word_dict['évoluée'] = word_dict['évoluées'] = 'évolué'
+word_dict['nègres'] = 'nègre'
 
 composite_dict[('évolué', 'VERB')] = 'évolué'
 
