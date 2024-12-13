@@ -5,24 +5,24 @@ import stanza
 from stanza.pipeline.processor import register_processor, Processor
 from stanza.models.common.doc import Word
 
-from src.utils import comp_split_german
+from src.utils import comp_split_dutch
 
 VOCABULARIES_PATH = os.getenv('VOCABULARIES_PATH')
 
 
-@register_processor('german_compound_noun_splitter')
+@register_processor('dutch_compound_noun_splitter')
 class GermanCompNounSplitterProcessor(Processor):
     _requires = {'tokenize', 'pos', 'delayedlemma'}
     _provides = {'splitter'}
 
     def __init__(self, device, config, pipeline):
-        model_path = os.path.join(VOCABULARIES_PATH, './german_utf8_linux.dic')
+        model_path = os.path.join(VOCABULARIES_PATH, './nl-NL.dic')
         self._set_up_model({'model_path': model_path}, pipeline, 'cpu')
 
     def _set_up_model(self, config, pipeline, device):
         input_file = config['model_path']
         # TODO: save the ahocs in preprocessing and just load it here
-        self._ahocs = comp_split_german.read_dictionary_from_file(input_file)
+        self._ahocs = comp_split_dutch.read_dictionary_from_file(input_file)
 
     def process(self, doc):
         for sent in doc.sentences:
@@ -36,7 +36,7 @@ class GermanCompNounSplitterProcessor(Processor):
                         new_word_list.append(word)
                     else:
                         try:
-                            dissection = comp_split_german.dissect(
+                            dissection = comp_split_dutch.dissect(
                                 word.text, self._ahocs, make_singular=True)
                         except Exception as e:
                             print(e)

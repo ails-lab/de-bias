@@ -20,7 +20,7 @@ MERGE_RIGHT = ['ff', 'au', 'ei', 'ung', 'ion', 'um',
                'ar', 'ät', 'a', 'ie', 'ine', 'euse',  # 'in'
                'chen', 'lein', 'nis', 'ium', 'mus']
 
-PLURAL_SUFFIX = ['en', 'er', 'e', 'n', 's']
+PLURAL_SUFFIX = ['en', 'er', 'e', 'n', 's', 'EN', 'ER', 'E', 'N', 'S']
 
 PLURAL_TRANSITION_VOWEL = {'ä': 'a',
                            'ü': 'u',
