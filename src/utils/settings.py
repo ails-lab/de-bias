@@ -9,6 +9,7 @@ ENTITY_TYPES = ['PERSON', 'ORGANIZATION', 'LOCATION', 'PER', 'ORG', 'LOC', 'FAC'
 
 STANZA_MODELS_KWARGS = {
     'en': {
+        'download_method': 'reuse_resources',
         'processors': 'tokenize, mwt, pos, ner, standardize, delayedlemma',
         'package': 'default_accurate',
         'delayedlemma_model_path': os.path.join(STANZA_RESOURCES_DIR,
@@ -19,6 +20,7 @@ STANZA_MODELS_KWARGS = {
                                                           'en/backward_charlm/1billion.pt')
     },
     'fr': {
+        'download_method': 'reuse_resources',
         'processors': 'tokenize, mwt, pos, ner, standardize, delayedlemma',
         'package': 'default_accurate',
         'delayedlemma_model_path': os.path.join(STANZA_RESOURCES_DIR,
@@ -29,6 +31,7 @@ STANZA_MODELS_KWARGS = {
                                                           'fr/backward_charlm/newswiki.pt')
     },
     'nl': {
+        'download_method': 'reuse_resources',
         'processors': 'tokenize, mwt, pos, ner, standardize, delayedlemma',
         'package': 'default_accurate',
         'delayedlemma_model_path': os.path.join(STANZA_RESOURCES_DIR,
@@ -39,6 +42,7 @@ STANZA_MODELS_KWARGS = {
                                                           'nl/backward_charlm/ccwiki.pt')
     },
     'de': {
+        'download_method': 'reuse_resources',
         'processors': 'tokenize, mwt, pos, ner, standardize, delayedlemma, german_compound_noun_splitter',
         'package': 'default_accurate',
         'delayedlemma_model_path': os.path.join(STANZA_RESOURCES_DIR,
@@ -49,6 +53,7 @@ STANZA_MODELS_KWARGS = {
                                                           'de/backward_charlm/newswiki.pt')
         },
     'it': {
+        'download_method': 'reuse_resources',
         'processors': 'tokenize, mwt, pos, ner, standardize, delayedlemma',
         'package': 'default_accurate',
         'delayedlemma_model_path': os.path.join(STANZA_RESOURCES_DIR,
@@ -59,6 +64,7 @@ STANZA_MODELS_KWARGS = {
                                                           'it/backward_charlm/conll17.pt')
     },
     'corporate': {
+        'download_method': 'reuse_resources',
         'processors': 'tokenize, mwt, pos, ner, standardize, delayedlemma',
         'package': 'default_accurate',
         'delayedlemma_model_path': os.path.join(STANZA_RESOURCES_DIR,
