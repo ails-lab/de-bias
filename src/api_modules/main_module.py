@@ -55,8 +55,7 @@ def find_terms(docs, language: str = 'en', mode: RequestMode = RequestMode.SIMPL
         term_context = terms['term_context']
         terms = terms['processed_terms']
 
-    in_docs = [stanza.Document([], text=d) for d in docs]
-    out_docs = nlp(in_docs)
+    out_docs = nlp.bulk_process(docs)
     # print('tokens')
     # for doc in out_docs:
     #     print(doc)

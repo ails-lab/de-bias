@@ -57,7 +57,7 @@ STANZA_MODELS_KWARGS = {
         'processors': 'tokenize, mwt, pos, ner, standardize, delayedlemma',
         'package': 'default_accurate',
         'delayedlemma_model_path': os.path.join(STANZA_RESOURCES_DIR,
-                                                'it/lemma/combined_charlm.pt'),
+                                                'it/lemma/combined_charlm_customized.pt'),
         'delayedlemma_forward_charlm_path': os.path.join(STANZA_RESOURCES_DIR,
                                                          'it/forward_charlm/conll17.pt'),
         'delayedlemma_backward_charlm_path': os.path.join(STANZA_RESOURCES_DIR,
