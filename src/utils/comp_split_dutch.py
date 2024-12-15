@@ -192,11 +192,13 @@ def dissect(compound, ahocs, only_nouns=False, make_singular=False, mask_unknown
         # get the words that end where partial split begins
         # check if there are no such words
         if match := matches[partial_split[-1] - 1]:
+            # print(match)
             # avoid two consecutive short splits
             if (len(partial_split) >= 2
                     and partial_split[-2] - partial_split[-1] < 4
                     and partial_split[-1] - match[-1][0] < 4):
                 match.pop()
+                # print('short splits')
             else:
                 partial_split.append(match[-1][0])
                 # no need to test each word more than once
@@ -206,6 +208,7 @@ def dissect(compound, ahocs, only_nouns=False, make_singular=False, mask_unknown
         else:
             partial_split.pop()
 
+    # print('partial split ', partial_split)
     if not partial_split:
         return [compound]
 
