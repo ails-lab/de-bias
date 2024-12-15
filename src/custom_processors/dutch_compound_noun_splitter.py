@@ -37,7 +37,7 @@ class GermanCompNounSplitterProcessor(Processor):
                     else:
                         try:
                             dissection = comp_split_dutch.dissect(
-                                word.text, self._ahocs, make_singular=True)
+                                word.text, self._ahocs, make_singular=True, only_nouns=False)
                         except Exception as e:
                             print(e)
                             dissection = [word.text]
