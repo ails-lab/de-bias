@@ -6,6 +6,7 @@
 # Copyright 2020 by repodiac (see https://github.com/repodiac, also for information how to provide attribution to this work)
 #
 import re
+from collections import defaultdict
 
 import ahocorasick
 
