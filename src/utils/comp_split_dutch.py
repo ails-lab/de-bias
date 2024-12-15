@@ -145,7 +145,7 @@ def compute_singular(item, ahocs):
     return item
 
 
-def dissect(compound, ahocs, only_nouns=True, make_singular=False, mask_unknown=False):
+def dissect(compound, ahocs, only_nouns=False, make_singular=False, mask_unknown=False):
     """
     Dissects any compound word if splits are to be found in loaded dictionary
 
@@ -161,7 +161,7 @@ def dissect(compound, ahocs, only_nouns=True, make_singular=False, mask_unknown=
 
     # dict of candidate words for splitting up the compound word
     # for each *end index* with substrings, the list of substrings is stored, i.e. all strings which end there
-    matches = {}
+    matches = defaultdict(list)
 
     # iterates over all found substrings in compound word, provides end index and substring itself
     for end, val in ahocs.iter(compound.lower()):
@@ -175,95 +175,41 @@ def dissect(compound, ahocs, only_nouns=True, make_singular=False, mask_unknown=
             matches[end] = []
         matches[end].append((start, val))
 
-    # make sure the list per end index is reversely sorted by *start index*, such as the *shortest* substring per list
-    # comes first
     for k in matches.keys():
-        matches[k] = sorted(matches[k], key=lambda s: s[0], reverse=True)
+        matches[k] = sorted(matches[k], key=lambda s: s[0])
 
-    results = []
     # if no substrings were found, return compound word
     if not matches:
-        results = [compound]
-        return results
+        return [compound]
 
-    # start from the end, use last index available
-    max_end_pos = max(matches.keys())
-    current_end_pos = max_end_pos
+    # partial split keeps track of word boundaries in reverse order
+    # we cover the word from end to beginning
+    partial_split = [len(compound)]
+    while partial_split and partial_split[-1] > 0:
+        # print(partial_split, partial_split[-1])
 
-    # end position for unknown parts of the compound which cannot be found in or via the dictionary
-    lost_end_pos = -1
-    # make sure you cover the full tail of the compound, in case the last part is unknown
-    if (max_end_pos+1) < len(compound):
-        lost_end_pos = len(compound)
+        # get the words that end where partial split begins
+        # check if there are no such words
+        if match := matches[partial_split[-1] - 1]:
+            # avoid two consecutive short splits
+            if (len(partial_split) >= 2
+                    and partial_split[-2] - partial_split[-1] < 4
+                    and partial_split[-1] - match[-1][0] < 4):
+                match.pop()
+            else:
+                partial_split.append(match[-1][0])
+                # no need to test each word more than once
+                # no matter the suffix, if it doesn't match
+                # the first time, it never will
+                match.pop()
+        else:
+            partial_split.pop()
 
-    # loop over the compound from the end to the start (reverse order)
-    while current_end_pos > 0:
-        end_next = -1
+    if not partial_split:
+        return [compound]
 
-        if current_end_pos in matches:
-            # attach unknown middle part, in case
-            if lost_end_pos > -1 and results:
-                if mask_unknown:
-                    results.insert(0, '__unknown__')
-                else:
-                    results.insert(0, compound[current_end_pos + 1:lost_end_pos])
-                lost_end_pos = -1
-
-            # if current_end_pos is a valid end index, loop over the list of substrings ending there and
-            # try to find the next split position
-            for select_compound in matches[current_end_pos]:
-                start_compound = select_compound[0]
-                # valid split found, but may contain case "s"
-                if (start_compound - 1) in matches:
-                    end_next = start_compound - 1
-                # valid split found, but may have plural form of split word
-                elif (start_compound - 2) in matches and _check_if_suffix(compound[start_compound - 1:]):
-                    end_next = start_compound - 2
-                # invariant: end of string (reached start of compound, pos=0)
-                elif start_compound == 0:
-                    end_next = 0
-
-                # add valid split word to result list
-                if end_next > -1:
-                    results.insert(0, select_compound[1][1])
-                    current_end_pos = end_next
-                    lost_end_pos = -1
-                    break
-
-        # no split found in current list of substrings (with the same end index),
-        # thus continue with one end index to the left and see if there are valid splits (in the next iteration)
-        if end_next == -1:
-            if lost_end_pos == -1:
-                lost_end_pos = current_end_pos + 1
-            current_end_pos -= 1
-
-    # attach unknown remainder in the front, in case
-    if lost_end_pos > -1:
-        results.insert(0, compound[current_end_pos:lost_end_pos])
-
-    # post-corrections, e.g. merge invalid splits if split and succeeding split word merged
-    # is a valid entry in the dictionary
-    if only_nouns and results:
-        # workaround to prevent unwanted behaviour (only nouns are eligible)
-        results[0] = results[0][0].upper() + results[0][1:]
-        ri = 0
-        while ri < len(results) - 1:
-            if results[ri].islower():
-                merged = results[ri] + results[ri + 1].lower()
-                if ahocs.exists(merged):
-                    part1 = results[ri]
-                    part2 = results[ri + 1]
-                    results.insert(ri, merged[0].upper() + merged[1:])
-                    results.remove(part1)
-                    results.remove(part2)
-                else:
-                    # workaround for single letters (most likely artifacts)
-                    if len(results[ri]) == 1:
-                        aritfact_single_letter = results[ri]
-                        results[ri-1] += aritfact_single_letter
-                        results.remove(aritfact_single_letter)
-            ri += 1
-
+    results = [compound[partial_split[i]:partial_split[i - 1]]
+               for i in range(len(partial_split) - 1, 0, -1)]
     # if set, compute singular version of each split word
     if make_singular:
         for ri in range(len(results)):
