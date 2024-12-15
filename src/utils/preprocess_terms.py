@@ -7,7 +7,7 @@ import stanza
 import pandas as pd
 
 from src.utils.settings import STANZA_MODELS_KWARGS
-from src.custom_processors import standardize, dutch_compound_noun_splitter, delayed_lemmatizer, german_compound_noun_splitter
+from src.custom_processors import standardize, dutch_compound_noun_splitter, german_compound_noun_splitter, delayed_lemmatizer
 
 
 def preprocess_terms(terms_filepath: str, savepath: str, language: str = 'en', ret: bool = False)\

@@ -43,7 +43,7 @@ STANZA_MODELS_KWARGS = {
     },
     'de': {
         'download_method': 'reuse_resources',
-        'processors': 'tokenize, mwt, pos, ner, standardize, delayedlemma, german_compound_noun_splitter',
+        'processors': 'tokenize, mwt, pos, ner, standardize, german_compound_noun_splitter, delayedlemma',
         'package': 'default_accurate',
         'delayedlemma_model_path': os.path.join(STANZA_RESOURCES_DIR,
                                                 'de/lemma/gsd_charlm_customized.pt'),

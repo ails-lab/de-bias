@@ -10,7 +10,7 @@ from src.api_modules.matching_module import find_matches
 from src.utils.settings import STANZA_MODELS_KWARGS, STARTUP_LANGUAGES, PROCESSED_TERMS_FILEPATHS
 # need to import in order to log these as stanza processors
 # ORDER MATTERS for some godforsaken reason
-from src.custom_processors import standardize, dutch_compound_noun_splitter, delayed_lemmatizer, german_compound_noun_splitter
+from src.custom_processors import standardize, dutch_compound_noun_splitter, german_compound_noun_splitter, delayed_lemmatizer
 
 
 in_memory_models = OrderedDict({
