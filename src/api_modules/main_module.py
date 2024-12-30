@@ -76,8 +76,9 @@ def find_terms(docs, language: str = 'en', mode: RequestMode = RequestMode.SIMPL
             if use_ner:
                 matches = ner_filtering(sentence, matches)
             if use_llm:
-                llm_texts = [' '.join(doc.sentences[i-1:i+2]) if (i := match.sentence_index) >= 1
-                             else ' '.join(doc.sentences[:i+2])
+                llm_texts = [' '.join([sent.text for sent in doc.sentences[i-1:i+2]])
+                             if (i := match.sentence_index) >= 1
+                             else ' '.join(sent.text for sent in doc.sentences[:i+2])
                              for match in matches]
                 matches = llm_filtering(llm_texts, matches, term_context, language)
             filtered_matches.extend(matches)
