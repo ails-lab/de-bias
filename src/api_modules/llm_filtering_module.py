@@ -5,14 +5,14 @@ from src.utils.llm_settings import FILTER_AMBIGUOUS, LLM_PROMPTS, POSITIVE_RESPO
 from src.utils.prompt_llm import prompt_llm
 
 
-def llm_filtering(doc: str,
+def llm_filtering(texts: list[str],
                   matches: list[Match],
                   context: dict,
                   language: str = 'en') -> list[Match]:
 
     filtered_matches = []
 
-    for match in matches:
+    for text, match in zip(texts, matches):
         if not context[(match.term_literal, match.term_uri)]['disambiguation']:
             filtered_matches.append(match)
             continue
@@ -21,7 +21,7 @@ def llm_filtering(doc: str,
                                context=context[(match.term_literal, match.term_uri)]['context'],
                                positive_response=POSITIVE_RESPONSES[language][0],
                                negative_response=NEGATIVE_RESPONSES[language][0],
-                               text=doc)
+                               text=text)
         # print(prompt)
         response = prompt_llm(prompt).strip()
         if response.startswith(POSITIVE_RESPONSES[language]):

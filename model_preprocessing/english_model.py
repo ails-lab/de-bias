@@ -39,6 +39,7 @@ word_dict['maroons'] = 'maroon'
 word_dict['gipsy'] = word_dict['gipsies'] = 'gypsy'
 word_dict['cannibal'] = word_dict['cannibals'] = 'cannibal'
 word_dict['huns'] = 'hun'
+word_dict['bound'] = 'bound'
 
 composite_dict[('woman', 'NOUN')] = composite_dict[('women', 'NOUN')] = 'man'
 composite_dict[('roots', 'NOUN')] = 'roots'
