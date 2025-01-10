@@ -6,7 +6,7 @@ from stanza.models.common.doc import Word
 
 
 @register_processor('standardize')
-class GermanCompNounSplitterProcessor(Processor):
+class StandardizeProcessor(Processor):
     _requires = {'tokenize', 'pos', 'ner'}
     _provides = {'standardize'}
 

@@ -11,7 +11,7 @@ VOCABULARIES_PATH = os.getenv('VOCABULARIES_PATH')
 
 
 @register_processor('dutch_compound_noun_splitter')
-class GermanCompNounSplitterProcessor(Processor):
+class DutchCompNounSplitterProcessor(Processor):
     _requires = {'tokenize', 'pos', 'delayedlemma'}
     _provides = {'splitter'}
 
