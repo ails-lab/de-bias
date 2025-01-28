@@ -63,17 +63,6 @@ STANZA_MODELS_KWARGS = {
         'delayedlemma_backward_charlm_path': os.path.join(STANZA_RESOURCES_DIR,
                                                           'it/backward_charlm/conll17.pt')
     },
-    'corporate': {
-        'download_method': 'reuse_resources',
-        'processors': 'tokenize, mwt, pos, ner, standardize, delayedlemma',
-        'package': 'default_accurate',
-        'delayedlemma_model_path': os.path.join(STANZA_RESOURCES_DIR,
-                                                'en/lemma/combined_charlm_customized.pt'),
-        'delayedlemma_forward_charlm_path': os.path.join(STANZA_RESOURCES_DIR,
-                                                         'en/forward_charlm/1billion.pt'),
-        'delayedlemma_backward_charlm_path': os.path.join(STANZA_RESOURCES_DIR,
-                                                          'en/backward_charlm/1billion.pt')
-    }
 }
 
 STARTUP_LANGUAGES = [
@@ -82,7 +71,6 @@ STARTUP_LANGUAGES = [
     'de',
     'fr',
     'nl',
-    # 'corporate'
 ]
 
 PROCESSED_TERMS_FILEPATHS = {
@@ -91,5 +79,4 @@ PROCESSED_TERMS_FILEPATHS = {
     'nl': os.path.join(VOCABULARIES_PATH, 'nl_vocab_from_graph_processed.pickle'),
     'de': os.path.join(VOCABULARIES_PATH, 'de_vocab_from_graph_processed.pickle'),
     'it': os.path.join(VOCABULARIES_PATH, 'it_vocab_from_graph_processed.pickle'),
-    'corporate': os.path.join(VOCABULARIES_PATH, 'corporate_bodies_en_processed.pickle')
 }

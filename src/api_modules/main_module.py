@@ -71,8 +71,9 @@ def find_terms(docs, language: str = 'en', mode: RequestMode = RequestMode.SIMPL
         for sentence_id, sentence in enumerate(doc.sentences):
             matches = find_matches(sentence, terms)
             for match in matches:
-                match.sentence_index = sentence_id
                 match.text = doc.text[match.start_char:match.end_char]
+                match.issue_description = term_context[(match.term_literal, match.term_uri)]['context']
+                match.sentence_index = sentence_id
             if use_ner:
                 matches = ner_filtering(sentence, matches)
             if use_llm:
@@ -91,6 +92,8 @@ def find_terms(docs, language: str = 'en', mode: RequestMode = RequestMode.SIMPL
             for match in matches:
                 tags.append({
                     'uri': match.term_uri,
+                    'literal': match.term_literal,
+                    'issue': match.issue_description,
                     'start': match.start_char,
                     'end': match.end_char,
                     'length': match.end_char - match.start_char

@@ -33,6 +33,8 @@ class SimpleResponseMetadata(BaseModel):
 
 class SimpleResponseItemTag(BaseModel):
     uri: str
+    literal: str
+    issue: str
     start: int
     end: int
     length: int
@@ -127,10 +129,11 @@ class RequestMode(Enum):
 class Match:
     term_uri: str
     term_literal: str
+    issue_description: str | None
     text: str
     start_char: int
     end_char: int
-    sentence_index: int
+    sentence_index: int | None
     word_id: int
 
 

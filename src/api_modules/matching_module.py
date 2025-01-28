@@ -43,13 +43,14 @@ def find_matches(sentence: stanza.models.common.doc.Sentence,
             match_distance = Levenshtein.distance(match_text, lemmatized_term[-1][0],
                                                   weights=(2, 2, 3))
             match = Match(
-                    term_uri=lemmatized_term[-1][1],  # term uri
-                    term_literal=lemmatized_term[-1][0],  # term literal
-                    sentence_index=None,
-                    start_char=start_char,
-                    end_char=end_char,
-                    text=match_text,
-                    word_id=word.id
+                term_uri=lemmatized_term[-1][1],  # term uri
+                term_literal=lemmatized_term[-1][0],  # term literal
+                issue_description=None,
+                text=match_text,
+                start_char=start_char,
+                end_char=end_char,
+                sentence_index=None,
+                word_id=word.id
             )
             # we keep this match if it's the first
             # or if it's the longest
