@@ -160,6 +160,8 @@ cython_debug/
 .idea/
  images/
 
- *.csv
- *.png
- *.json
+*.csv
+*.png
+*.json
+*.txt
+*.zip
