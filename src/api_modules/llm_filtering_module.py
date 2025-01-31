@@ -1,17 +1,24 @@
+import json
+
 import stanza
 
 from src.utils.api_helper_classes import Match
-from src.utils.llm_settings import FILTER_AMBIGUOUS, LLM_PROMPTS, POSITIVE_RESPONSES, NEGATIVE_RESPONSES
+from src.utils.llm_settings import FILTER_AMBIGUOUS, LLM_PROMPTS, LLM_TYPE, POSITIVE_RESPONSES, \
+    NEGATIVE_RESPONSES, LLM_PROMPTS_FILE
 from src.utils.prompt_llm import prompt_llm
 
 
 def llm_filtering(texts: list[str],
                   matches: list[Match],
                   context: dict,
-                  language: str = 'en') -> list[Match]:
+                  language: str = 'en',
+                  reload_prompts: bool = False) -> list[Match]:
 
     filtered_matches = []
 
+    if reload_prompts:
+        with open(LLM_PROMPTS_FILE, 'r') as fp:
+            LLM_PROMPTS = json.load(fp)[LLM_TYPE]
     for text, match in zip(texts, matches):
         if not context[(match.term_literal, match.term_uri)]['disambiguation']:
             filtered_matches.append(match)

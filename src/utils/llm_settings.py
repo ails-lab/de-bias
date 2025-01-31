@@ -3,7 +3,7 @@ import json
 
 
 LLM_ENDPOINT = os.getenv('LLM_ENDPOINT') + '/completion'
-LLM_TYPE = 'completion'
+LLM_TYPE = 'instruct'
 FILTER_AMBIGUOUS = True
 LLM_PROMPTS_FILE = os.path.join(os.getenv('VOCABULARIES_PATH'), 'llm_prompts.json')
 
@@ -35,7 +35,6 @@ POSITIVE_RESPONSES = {
     'nl': ('ja', 'Ja'),
     'it': ('sì', 'Sì'),
     'de': ('ja', 'Ja'),
-    'corporate': ('yes', 'Yes')
 }
 NEGATIVE_RESPONSES = {
     'en': ('no', 'No'),
@@ -43,7 +42,6 @@ NEGATIVE_RESPONSES = {
     'nl': ('nee', 'Nee', 'neen', 'Neen'),
     'it': ('no', 'No'),
     'de': ('nein', 'Nein'),
-    'corporate': ('no', 'No')
 }
 
 
