@@ -3,7 +3,6 @@ import json
 
 
 LLM_ENDPOINT = os.getenv('LLM_ENDPOINT') + '/completion'
-LLM_TYPE = 'instruct'
 FILTER_AMBIGUOUS = True
 LLM_PROMPTS_FILE = os.path.join(os.getenv('VOCABULARIES_PATH'), 'llm_prompts.json')
 
@@ -46,4 +45,4 @@ NEGATIVE_RESPONSES = {
 
 
 with open(LLM_PROMPTS_FILE, 'r') as fp:
-    LLM_PROMPTS = json.load(fp)[LLM_TYPE]
+    LLM_PROMPTS = json.load(fp)
