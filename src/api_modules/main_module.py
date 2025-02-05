@@ -26,7 +26,7 @@ for lang in STARTUP_LANGUAGES:
 
 
 def find_terms(docs, language: str = 'en', mode: RequestMode = RequestMode.SIMPLE,
-               use_ner: bool = True, use_llm: bool = False):
+               use_ner: bool = True, use_llm: bool = False, reload_prompts=False):
     # Load model in memory
     if language in in_memory_models:
         nlp = in_memory_models[language]
@@ -81,7 +81,7 @@ def find_terms(docs, language: str = 'en', mode: RequestMode = RequestMode.SIMPL
                              if (i := match.sentence_index) >= 1
                              else ' '.join(sent.text for sent in doc.sentences[:i+2])
                              for match in matches]
-                matches = llm_filtering(llm_texts, matches, term_context, language)
+                matches = llm_filtering(llm_texts, matches, term_context, language, reload_prompts)
             filtered_matches.extend(matches)
         filtered_matches_by_doc.append(filtered_matches)
 

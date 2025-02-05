@@ -12,6 +12,7 @@ class SimpleRequest(BaseModel):
     values: list[str]
     use_ner: bool = Field(True, alias="useNER")
     use_llm: bool = Field(True, alias="useLLM")
+    reload_prompts: bool = Field(False, alias="reloadPrompts")
 
 
 class TextSpan(BaseModel):

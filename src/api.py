@@ -29,8 +29,9 @@ async def simple_request(request: SimpleRequest) -> SimpleResponse:
     language = request.language
     use_ner = request.use_ner
     use_llm = request.use_llm
+    reload_prompts = request.reload_prompts
     try:
-        filtered_matches = find_terms(docs, language, RequestMode.SIMPLE, use_ner, use_llm)
+        filtered_matches = find_terms(docs, language, RequestMode.SIMPLE, use_ner, use_llm, reload_prompts)
     except ValueError as e:
         raise HTTPException(status_code=400, detail=e.args)
     response = {
