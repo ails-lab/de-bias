@@ -8,7 +8,7 @@ LLM_PROMPTS_FILE = os.path.join(os.getenv('VOCABULARIES_PATH'), 'llm_prompts.jso
 
 BASE_PAYLOAD = {
     "stream": False,
-    "n_predict": 10,
+    "n_predict": 6,
     "temperature": 0,
     "stop": [
         "</s>"
