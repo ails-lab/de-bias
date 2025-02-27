@@ -17,7 +17,9 @@ STANZA_MODELS_KWARGS = {
         'delayedlemma_forward_charlm_path': os.path.join(STANZA_RESOURCES_DIR,
                                                          'en/forward_charlm/1billion.pt'),
         'delayedlemma_backward_charlm_path': os.path.join(STANZA_RESOURCES_DIR,
-                                                          'en/backward_charlm/1billion.pt')
+                                                          'en/backward_charlm/1billion.pt'),
+        'delayedlemma_pretrain_path': os.path.join(STANZA_RESOURCES_DIR,
+                                                   'en/pretrain/conll17.pt'),
     },
     'fr': {
         'download_method': 'reuse_resources',
