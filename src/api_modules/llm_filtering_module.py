@@ -29,7 +29,9 @@ def llm_filtering(texts: list[str],
                                negative_response=NEGATIVE_RESPONSES[language][0],
                                text=text)
         # print(prompt)
-        response = prompt_llm(prompt).strip()
+        grammar = 'root::=("{}" | "{}").*'.format(POSITIVE_RESPONSES[language][1],
+                                                  NEGATIVE_RESPONSES[language][1])
+        response = prompt_llm(prompt, grammar).strip()
         if response.startswith(POSITIVE_RESPONSES[language]):
             filtered_matches.append(match)
         elif response.startswith(NEGATIVE_RESPONSES[language]):
