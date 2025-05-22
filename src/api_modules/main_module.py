@@ -31,10 +31,6 @@ def find_terms(docs, language: str = 'en', mode: RequestMode = RequestMode.SIMPL
     if language in in_memory_models:
         nlp = in_memory_models[language]
         in_memory_models.move_to_end(language)
-    elif language == 'corporate':
-        nlp = stanza.Pipeline('en', **STANZA_MODELS_KWARGS[language])
-        in_memory_models.popitem(last=False)
-        in_memory_models[language] = nlp
     elif language not in STANZA_MODELS_KWARGS:
         raise ValueError('lang code not supported\n lang code must be one of '
                          + ', '.join(list(STANZA_MODELS_KWARGS)))
@@ -73,6 +69,7 @@ def find_terms(docs, language: str = 'en', mode: RequestMode = RequestMode.SIMPL
             for match in matches:
                 match.text = doc.text[match.start_char:match.end_char]
                 match.issue_description = term_context[(match.term_literal, match.term_uri)]['context']
+                match.source = term_context[(match.term_literal, match.term_uri)]['source']
                 match.sentence_index = sentence_id
             if use_ner:
                 matches = ner_filtering(sentence, matches)
@@ -94,6 +91,7 @@ def find_terms(docs, language: str = 'en', mode: RequestMode = RequestMode.SIMPL
                     'uri': match.term_uri,
                     'literal': match.term_literal,
                     'issue': match.issue_description,
+                    'source': match.source,
                     'start': match.start_char,
                     'end': match.end_char,
                     'length': match.end_char - match.start_char

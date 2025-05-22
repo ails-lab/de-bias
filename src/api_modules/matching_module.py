@@ -46,6 +46,7 @@ def find_matches(sentence: stanza.models.common.doc.Sentence,
                 term_uri=lemmatized_term[-1][1],  # term uri
                 term_literal=lemmatized_term[-1][0],  # term literal
                 issue_description=None,
+                source=None,
                 text=match_text,
                 start_char=start_char,
                 end_char=end_char,

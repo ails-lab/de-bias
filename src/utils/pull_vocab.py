@@ -12,10 +12,11 @@ PREFIX skosxl: <http://www.w3.org/2008/05/skos-xl#>
 PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
 
 
-SELECT DISTINCT ?uri ?term ?context ?suggestion ?disambiguation WHERE {{
+SELECT DISTINCT ?uri ?term ?context ?suggestion ?source ?disambiguation WHERE {{
     ?uri debias-o:hasContentiousIssue ?issue_uri .
     ?uri skosxl:literalForm ?term .
     ?issue_uri dct:description ?context .
+    ?issue_uri dct:source ?source .
     ?uri debias-o:isAmbiguous ?disambiguation .
     OPTIONAL {{
         ?uri debias-o:hasSuggestionNote ?suggestion_uri .

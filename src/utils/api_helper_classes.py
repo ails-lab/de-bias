@@ -36,6 +36,7 @@ class SimpleResponseItemTag(BaseModel):
     uri: str
     literal: str
     issue: str
+    source: str
     start: int
     end: int
     length: int
@@ -131,6 +132,7 @@ class Match:
     term_uri: str
     term_literal: str
     issue_description: str | None
+    source: str | None
     text: str
     start_char: int
     end_char: int
