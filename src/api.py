@@ -43,7 +43,7 @@ async def simple_request(request: SimpleRequest) -> SimpleResponse:
         },
         "results": filtered_matches
     }
-    return response
+    return SimpleResponse(**response)
 
 
 @app.post('/')
@@ -153,4 +153,4 @@ async def detailed_request(request: DetailedRequest) -> DetailedResponse:
     ]
 
     response["items"] = response_items
-    return response
+    return DetailedResponse(**response)
