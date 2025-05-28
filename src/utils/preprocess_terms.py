@@ -33,8 +33,8 @@ def preprocess_terms(terms_filepath: str, savepath: str, language: str = 'en', r
     grouped_contexts = df.groupby(by=['term', 'uri'])
     term_context = grouped_contexts.agg({
         'term': 'first', 'uri': 'first', 'disambiguation': 'first',
-        'context': lambda x: ' '.join(set(x)), 'suggestion': lambda x: ' '.join(set(x)),
-        'source': lambda x: ', '.join(set(x))
+        'context': lambda x: '\n'.join(set(x)), 'suggestion': lambda x: '\n'.join(set(x)),
+        'source': lambda x: '\n'.join(set(x))
     })
     term_context = {(row['term'], row['uri']): row for row in term_context.to_dict(orient='records')}
     vocabulary = {
