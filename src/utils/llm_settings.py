@@ -2,27 +2,16 @@ import os
 import json
 
 
-LLM_ENDPOINT = os.getenv('LLM_ENDPOINT') + '/completion'
+LLM_ENDPOINT = os.getenv('LLM_ENDPOINT').rstrip('/') + '/v1/chat/completions'
+# Optional: vLLM falls back to the model it serves when a request names none
+LLM_MODEL = os.getenv('LLM_MODEL')
 FILTER_AMBIGUOUS = True
 LLM_PROMPTS_FILE = os.path.join(os.getenv('VOCABULARIES_PATH'), 'prompts', 'llm_prompts.json')
 
 BASE_PAYLOAD = {
     "stream": False,
-    "n_predict": 6,
+    "max_tokens": 6,
     "temperature": 0,
-    "stop": [
-        "</s>"
-    ],
-    "repeat_last_n": 0,
-    "repeat_penalty": 0,
-    "top_k": -1,
-    "top_p": 0,
-    "min_p": 0,
-    "tfs_z": 1,
-    "typical_p": 1,
-    "presence_penalty": 0,
-    "frequency_penalty": 0,
-    "cache_prompt": True,
 }
 BASE_HEADERS = {
     'Content-Type': 'application/json'
@@ -44,5 +33,15 @@ NEGATIVE_RESPONSES = {
 }
 
 
-with open(LLM_PROMPTS_FILE, 'r') as fp:
-    LLM_PROMPTS = json.load(fp)
+def load_prompts() -> dict[str, list[dict]]:
+    """Each language maps to a list of chat messages ({"role": ..., "content": ...})."""
+    with open(LLM_PROMPTS_FILE, 'r') as fp:
+        prompts = json.load(fp)
+    for language, messages in prompts.items():
+        if not isinstance(messages, list):
+            raise ValueError('{}: the prompt for "{}" must be a list of chat messages'
+                             .format(LLM_PROMPTS_FILE, language))
+    return prompts
+
+
+LLM_PROMPTS = load_prompts()

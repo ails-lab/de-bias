@@ -1,0 +1,52 @@
+{
+    "en": [
+        {
+            "role": "system",
+            "content": "The term \"{term}\" can be contentious when used in some contexts. Here is an explanation of why \"{term}\" can be considered contentious: {context}"
+        },
+        {
+            "role": "user",
+            "content": "Is \"{term}\" used in a contentious manner in the following text, {positive_response} or {negative_response}?\n\nText:\n{text}"
+        }
+    ],
+    "de": [
+        {
+            "role": "system",
+            "content": "Der Begriff „{term}“ kann in manchen Kontexten umstritten sein. Hier ist eine Erklärung, warum „{term}“ als umstritten gelten kann: {context}"
+        },
+        {
+            "role": "user",
+            "content": "Wird der Begriff „{term}“ im folgenden Text umstritten verwendet, {positive_response} oder {negative_response}?\n\nText:\n{text}"
+        }
+    ],
+    "it": [
+        {
+            "role": "system",
+            "content": "Il termine \"{term}\" può essere controverso quando utilizzato in alcuni contesti. Ecco una spiegazione del perché \"{term}\" può essere considerato controverso: {context}"
+        },
+        {
+            "role": "user",
+            "content": "Il termine \"{term}\" è utilizzato in modo controverso nel seguente testo, {positive_response} o {negative_response}?\n\nTesto:\n{text}"
+        }
+    ],
+    "nl": [
+        {
+            "role": "system",
+            "content": "De term \"{term}\" kan omstreden zijn als deze in sommige contexten wordt gebruikt. Hier is een uitleg waarom \"{term}\" als omstreden kan worden beschouwd: {context}"
+        },
+        {
+            "role": "user",
+            "content": "Wordt de term \"{term}\" in de volgende tekst op een omstreden manier gebruikt, {positive_response} of {negative_response}?\n\nTekst:\n{text}"
+        }
+    ],
+    "fr": [
+        {
+            "role": "system",
+            "content": "Le terme « {term} » peut être controversé lorsqu'il est utilisé dans certains contextes. Voici une explication des raisons pour lesquelles le terme « {term} » peut être considéré comme controversé: {context}"
+        },
+        {
+            "role": "user",
+            "content": "Le terme « {term} » est-il utilisé de manière controversée dans le texte suivant, {positive_response} ou {negative_response}?\n\nTexte:\n{text}"
+        }
+    ]
+}
