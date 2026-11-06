@@ -1,0 +1,15 @@
+FROM python:3.10-slim
+
+RUN pip install --no-cache-dir uv==0.13.5
+
+WORKDIR /app
+
+# Install into the image's system Python so the app Dockerfile (python -m uvicorn) works unchanged.
+ENV UV_PROJECT_ENVIRONMENT=/usr/local \
+    UV_PYTHON_DOWNLOADS=never \
+    UV_COMPILE_BYTECODE=1 \
+    UV_LINK_MODE=copy
+
+COPY pyproject.toml uv.lock .python-version /app/
+
+RUN uv sync --frozen --no-install-project --no-cache
