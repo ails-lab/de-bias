@@ -1,0 +1,30 @@
+# Settings come from .env in this directory (copy .env.example).
+name: de-bias
+
+services:
+  debias:
+    build:
+      context: ..
+      dockerfile: deploy/Dockerfile
+    image: de-bias:latest
+    restart: unless-stopped
+    environment:
+      LLM_ENDPOINT: ${LLM_ENDPOINT:?set LLM_ENDPOINT in deploy/.env}
+      LLM_MODEL: ${LLM_MODEL:-}
+    ports:
+      - "${DEBIAS_HOST_ADDR:-127.0.0.1}:${DEBIAS_HOST_PORT:-8000}:8000"
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              device_ids: ["${DEBIAS_GPU:-0}"]
+              capabilities: [gpu]
+    # The app prints every request body.
+    logging:
+      driver: json-file
+      options:
+        max-size: "50m"
+        max-file: "5"
