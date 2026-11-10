@@ -10,8 +10,13 @@ Every file is pinned by commit, never by tag: Stanza has re-pushed models under 
 tag (stanza-fr v1.10.0 moved past the lemma model production uses). The *_customized.pt lemma models
 are rebuilt with model_preprocessing/, so run this with the app's dependencies installed; they only
 come out byte-identical with the pinned torch version. Files that already exist are skipped.
+Afterwards every file is checked against its sha256 in the manifest, and the script exits non-zero
+on any mismatch. Generated files are only checked on Linux: torch.save writes a .data/serialization_id
+record that is built by iterating a std::unordered_set of record names, so it depends on the C++
+standard library. Their contents are the same on macOS, but the file hashes differ.
 """
 import argparse
+import hashlib
 import os
 import shutil
 import subprocess
@@ -74,11 +79,37 @@ def fetch(target, rows):
                            env={**os.environ, 'STANZA_RESOURCES_DIR': target})
 
 
+def sha256(path):
+    digest = hashlib.sha256()
+    with open(path, 'rb') as fp:
+        for chunk in iter(lambda: fp.read(1 << 20), b''):
+            digest.update(chunk)
+    return digest.hexdigest()
+
+
+def verify(target, rows):
+    mismatched = []
+    for kind, path, expected, source in rows:
+        dest = destination(target, kind, path, source)
+        if sha256(dest) != expected:
+            mismatched.append(dest)
+    return mismatched
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument('target')
     args = parser.parse_args()
-    fetch(os.path.abspath(args.target), read_manifest())
+    target = os.path.abspath(args.target)
+    rows = read_manifest()
+    fetch(target, rows)
+    if sys.platform != 'linux':
+        print('not on Linux: skipping the sha256 check of generated files')
+        rows = [row for row in rows if row[0] != 'generated']
+    mismatched = verify(target, rows)
+    if mismatched:
+        sys.exit('sha256 does not match models/manifest.tsv:\n  ' + '\n  '.join(mismatched))
+    print(f'{len(rows)} files match models/manifest.tsv')
 
 
 if __name__ == '__main__':
